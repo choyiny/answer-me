@@ -1,13 +1,18 @@
 from flask import Flask, request, render_template
+from flask_socketio import SocketIO, send, emit
 
 from answer import config
 from answer.extensions import db
 from answer.helpers import gen_response
-
+from answer.security import require_admin_key
+from answer.models import Player
+from answer.game import Game
 
 # initialize app with config params
 app = Flask(__name__)
 app.config.from_object(config)
+socketio = SocketIO(app)
+socketio.on_namespace(Game('/game'))
 
 # initialize connection to db
 with app.app_context():
@@ -21,4 +26,25 @@ with app.app_context():
 
 @app.route("/")
 def index():
-    return gen_response({"success": True})
+    """ Server index """
+    return render_template("index.html")
+
+
+@app.route("/admin/register")
+@require_admin_key
+def register_players():
+    """
+    Registers the players to the database based on (SOME) as follows:
+
+    [to be filled in]
+    """
+    # TODO: complete this function
+    # example code to populate players
+    emails = ['choyin.yong@mail.utoronto.ca', 'choyiny@gmail.com']
+
+    for email in emails:
+        player = Player(email=email)
+        # add player to database queue
+        db.session.add(player)
+    # commit everything to the database
+    db.session.commit()

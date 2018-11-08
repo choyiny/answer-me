@@ -1,2 +1,1 @@
-from app.models.immigrant import Immigrant
-from app.models.conflict import Conflict
+from answer.models.player import Player

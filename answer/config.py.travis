@@ -1,0 +1,4 @@
+SQLALCHEMY_DATABASE_URI = "postgresql://postgres@localhost/travis_ci_test"
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+TESTING = True
+DEBUG = False

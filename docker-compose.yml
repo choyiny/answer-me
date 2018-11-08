@@ -1,0 +1,14 @@
+# This docker-compose file will spin up a postgres database for use.
+version: '3'
+services:
+  # PostgreSQL container
+  postgres:
+    build: "postgres/"
+    volumes:
+      - "postgres:/var/lib/postgresql/data"
+    env_file:
+      - postgres/.env
+    ports:
+      - "5434:5434"
+volumes:
+  postgres:

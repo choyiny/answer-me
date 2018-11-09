@@ -16,3 +16,8 @@ class Player(db.Model):
 
     def __repr__(self):
         return f"<Player {self.email}>"
+
+    def get_dict(self):
+        return {
+            'email': self.player_email
+        }

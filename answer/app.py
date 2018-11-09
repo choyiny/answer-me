@@ -21,13 +21,19 @@ with app.app_context():
 
     # # Create all required models for database
     # from answer.models.player import Player
-    # db.create_all()
+    db.create_all()
 
 
 @app.route("/")
 def index():
     """ Server index """
     return render_template("index.html")
+
+
+@app.route("/tv")
+def tv():
+    """ TV index """
+    return render_template("tv.html")
 
 
 @app.route("/admin/register")
@@ -43,7 +49,7 @@ def register_players():
     emails = ['choyin.yong@mail.utoronto.ca', 'choyiny@gmail.com']
 
     for email in emails:
-        player = Player(email=email)
+        player = Player(player_email=email)
         # add player to database queue
         db.session.add(player)
     # commit everything to the database

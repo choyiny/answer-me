@@ -18,7 +18,7 @@ $ source answer-me-venv/bin/activate
 2. Clone the repository to your directory
 ```
 (answer-me-venv) $ git clone git@github.com:choyiny/answer-me.git
-(answer-me-venv) $ cd Team24
+(answer-me-venv) $ cd answer-me
 ```
 
 3. Install the required dependencies
@@ -45,7 +45,7 @@ $ source answer-me-venv/bin/activate
 2. Start server
 ```
 (answer-me-venv) $ cd answer
-(answer-me-venv) $ FLASK_APP=app.app flask run
+(answer-me-venv) $ FLASK_APP=answer.app flask run
 ```
 3. You should now able to access the website index.
 ```

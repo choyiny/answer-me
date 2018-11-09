@@ -5,18 +5,16 @@
     <title>Game</title>
 </head>
 <body>
-
+<button class="click-me">click me to queue</button>
 
 </body>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 <script type="text/javascript" charset="utf-8">
     var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
-    socket.on('connect', function() {
-        socket.emit('my_event', {data: {'username': 'choyin.yong'}});
+    $('.click-me').click(function () {
+       socket.emit('clicked_button', {'email': 'choyin.yong@mail.utoronto.ca'});
     });
-    socket.on('my_response', function(data) {
-        var data = data.data;
-        console.log(data);
-    });
+
 </script>
 </html>

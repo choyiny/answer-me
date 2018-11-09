@@ -44,7 +44,7 @@ $ source answer-me-venv/bin/activate
 ```
 2. Start server
 ```
-(answer-me-venv) $ cd answer
+(answer-me-venv) $ cd answer-me
 (answer-me-venv) $ FLASK_APP=answer.app flask run
 ```
 3. You should now able to access the website index.

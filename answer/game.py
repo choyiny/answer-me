@@ -1,8 +1,10 @@
+import time
 from queue import Queue
 from flask_socketio import Namespace
 from flask import session
 
-from answer.models import Player
+from answer.helpers import get_current_player
+from answer.extensions import db
 
 
 class Game(Namespace):
@@ -10,7 +12,17 @@ class Game(Namespace):
     Queue the players according to who click the button the fastest.
 
     """
+    # queue to keep track of who clicks the fastest in gamemode 2
     answer_queue = Queue()
+
+    # correct answer's index
+    correct_answer_idx = -1
+
+    # starting time of the question
+    starting_time = -1
+
+    # players who answered
+    answered = set()
 
     def on_connect(self):
         """
@@ -19,24 +31,38 @@ class Game(Namespace):
         """
         if session.get('username') is None:
             return False
-        if Player.query.filter_by(player_name=session.get('username')).first() is None:
+        if get_current_player(session.get('username')) is None:
             return False
 
-    def on_clicked_button(self, data):
+    def on_answer_option(self, data):
+        """ data is formatted as {"answer_number": 1} """
+        if data['answer_number'] == self.correct_answer_idx:
+
+            # time taken to answer the question = end time - start time
+            time_taken = time.time() - self.starting_time
+
+            player = get_current_player(session.get('username'))
+            if player.player_name not in self.answered:
+                self.answered.add(player.player_name)
+                # score for this round = 30 seconds - time taken
+                player.score += int(300 - round(time_taken, 2) * 100)
+                db.session.add(player)
+                db.session.commit()
+
+    def on_clicked_button(self):
         """
         A button has been clicked by a user
 
         data will contain player name.
         """
         # get the player associated
-        if data.get('name'):
-            player = Player.query.filter_by(player_email=data.get('name')).first()
-            if player is not None:
-                # put in the answer queue
-                self.answer_queue.put(player)
+        player = get_current_player(session.get('username'))
+        if player is not None:
+            # put in the answer queue
+            self.answer_queue.put(player)
 
-                # dequeue the first one
-                first_player = self.answer_queue.get().get_dict()
+            # dequeue the first one
+            first_player = self.answer_queue.get().get_dict()
 
-                # dequeue the first person and emit to tv
-                self.emit('player_clicked', first_player)
+            # dequeue the first person and emit to tv
+            self.emit('player_clicked', first_player)

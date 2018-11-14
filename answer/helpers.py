@@ -1,7 +1,11 @@
+from flask import session
 from functools import wraps
 
 
 # A collection of helper functions to help interact with Flask
+from answer.models import Player
+
+
 def gen_response(my_dict: dict):
     """
     Helper function to generate a response object that allows CORS.
@@ -26,3 +30,7 @@ def require_admin(func):
             # redirect with login
             return redirect('/')
     return check_token
+
+
+def get_current_player(username):
+    return Player.query.filter_by(player_name=username).first()

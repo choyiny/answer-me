@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, session
 from flask_socketio import SocketIO
 import random
+import time
 
 from answer import config
 from answer.extensions import db
@@ -29,6 +30,7 @@ def index():
 
 
 @app.route("/tv")
+@require_admin
 def tv():
     """ TV index """
     return render_template("tv.html")
@@ -37,10 +39,6 @@ def tv():
 @app.route("/login", methods=['POST'])
 def login():
     """ Login to obtain session cookie if available """
-    # novelty admin
-    if request.form.get('username') == 'novelty-admin!':
-        session['username'] = 'novelty-admin!'
-        return gen_response({'success': True, 'username': 'novelty-admin!'})
     # regular user
     if request.form.get('username') is not None:
         username = request.form.get('username')
@@ -51,18 +49,19 @@ def login():
             return gen_response({'success': False})
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["POST"])
 def logout():
     session['username'] = None
     return gen_response({'success': True})
 
 
-@app.route("/admin/noveltyadminadmin")
+@app.route("/lee/admin")
 def admin():
+    """ Auto logs in as admin and gives control panel """
     return render_template("admin.html")
 
 
-@app.route("/admin/register")
+@app.route("/admin/register", methods=["POST"])
 @require_admin
 def register_players():
     """
@@ -80,7 +79,7 @@ def register_players():
     db.session.commit()
 
 
-@app.route("/admin/import_questions")
+@app.route("/admin/import_questions", methods=["POST"])
 @require_admin
 def import_questions():
     """
@@ -92,7 +91,7 @@ def import_questions():
 
     questions_list = []
 
-    # read some csv into list
+    # TODO: read some csv into list
 
     # shuffle order here
     random.shuffle(questions_list)
@@ -109,20 +108,39 @@ def import_questions():
 def next_question():
     """
     Selects the next question in the database and broadcast it to all
-    :return:
     """
-    question = Question.query.filter_by(asked=False).first()
+    question: Question = Question.query.filter_by(asked=False).first()
+    if question:
+        question_dict = question.get_dict()
+        # a multiple choice question has been emitted
+        game.emit("multiple_choice", question_dict)
 
-    game.emit("multiple_choice", question.get_dict())
+        # reset starting time and players who answered the question
+        game.starting_time = time.time()
+        game.answered = set()
 
-    question.asked = True
-    db.session.add(question)
-    db.session.commit()
+        # keep track of the question id in the game singleton
+        game.correct_answer_idx = question_dict['answers'].index(question.correct_answer) + 1
 
+        # the question is now asked and cannot be selected again
+        question.asked = True
+        db.session.add(question)
+        db.session.commit()
+
+        return gen_response({'success': True})
+    else:
+        return gen_response({'success': False})
+
+
+@app.route("/admin/reset", methods=['POST'])
+@require_admin
+def reset_everyone():
+    game.emit("logout_everyone")
     return gen_response({'success': True})
 
 
-@app.route("/admin/reset")
+@app.route("/admin/bump_to_lobby", methods=['POST'])
 @require_admin
-def reset_everyone():
-    game.emit("logout_everyone");
+def back_to_lobby():
+    game.emit("lobby")
+    return gen_response({'success': True})

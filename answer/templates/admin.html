@@ -13,7 +13,8 @@
 </head>
 <body>
 <button class="btn btn-primary next-question">Next Question</button>
-<button class="btn btn-primary reset-to-login">Reset Everyone to Login</button>
+<button class="btn btn-success move-to-lobby">Move everyone back to lobby</button>
+<button class="btn btn-danger reset-to-login">KICK EVERYONE OUT</button>
 
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
@@ -26,7 +27,11 @@
             $.post(" {{ url_for('next_question') }}", function (data) {
                 console.log(data);
             });
-        })
+        });
+
+        $(".move-to-lobby").click(function () {
+            $.post(" {{ url_for('back_to_lobby') }}");
+        });
 
         $(".reset-to-login").click(function () {
            $.post(" {{ url_for('reset_everyone') }}");

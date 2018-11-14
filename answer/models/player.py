@@ -7,17 +7,17 @@ class Player(db.Model):
 
     player_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
-    player_email = db.Column(db.Text, nullable=False)
+    player_name = db.Column(db.Text, nullable=False)
 
     score = db.Column(db.BigInteger, default=0)
 
-    def __init__(self, email):
-        self.email = email
+    def __init__(self, player_name):
+        self.player_name = player_name
 
     def __repr__(self):
-        return f"<Player {self.email}>"
+        return f"<Player {self.player_name}>"
 
     def get_dict(self):
         return {
-            'email': self.player_email
+            'name': self.player_name
         }

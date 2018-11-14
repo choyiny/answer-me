@@ -2,19 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Game</title>
+    <title>Novelty - Answer Me</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        .hidden {
+            display: none;
+        }
+
+    </style>
 </head>
 <body>
-<button class="click-me">click me to queue</button>
+<section class="login-area">
+    <input class="form-control enter-username" type="text" placeholder="Enter your username">
+    <p class="help-text"></p>
+    <button class="btn btn-primary login">Login</button>
+
+
+</section>
+<section class="lobby hidden">
+    <!-- login success... waiting -->
+    <h1>Lobby</h1>
+</section>
+<section class="multiple-choice hidden">
+    <h1>Multiple Choice page</h1>
+</section>
+<section class="queue-up hidden">
+    <h1>Queue up page</h1>
+    <button class="click-me">click me to queue</button>
+</section>
 
 </body>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 <script type="text/javascript" charset="utf-8">
-    var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
-    $('.click-me').click(function () {
-       socket.emit('clicked_button', {'email': 'choyin.yong@mail.utoronto.ca'});
+    $(document).ready(function () {
+        // when the login button is pressed
+        $('.login-area .login').click(function () {
+            // login to get the session cookie
+            var username = $(".enter-username").val();
+            $.post("{{ url_for('login') }}", {"username": username}, function (data) {
+                if (data['success']) {
+                    $(".login-area .help-text").text("");
+                    $(".login-area").addClass("hidden");
+                    $(".lobby").removeClass("hidden");
+                    localStorage.setItem("username", data["username"]);
+                    connectToGame();
+                } else {
+                    $(".login-area .help-text").text("username not registered. Please use the prefix of your utoronto email");
+                }
+            });
+        });
     });
+
+
+    /**
+     * Connect to the main game via socket. Actively listen to connections and change the visibility of the sections
+     * if required.
+     */
+    function connectToGame() {
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
+        $('.click-me').click(function () {
+           socket.emit('clicked_button', {'name': localStorage.getItem("username")});
+        });
+
+        socket.on('multiple_choice', function(data) {
+            console.log(data);
+            switchView("multiple-choice");
+        });
+
+        socket.on('lobby', function() {
+            switchView("lobby");
+        });
+
+        socket.on('logout_everyone', function() {
+            switchView("login-area");
+        });
+
+        socket.on('queue_up', function() {
+            switchView("queue-up");
+        });
+    }
+
+    function switchView(viewName) {
+        $("section").addClass("hidden");
+        if (viewName === "lobby") {
+            $("section .lobby").removeClass("hidden");
+        } else if (viewName === "login-area") {
+            $("section .login-area").removeClass("hidden");
+            $.post("{{ url_for('logout') }}");
+        } else if (viewName === "multiple-choice") {
+            $("section .multiple-choice").removeClass("hidden");
+        } else if (viewName === "queue-up") {
+            $("section .queue-up").removeClass("hidden");
+        }
+    }
 
 </script>
 </html>

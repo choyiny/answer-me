@@ -21,6 +21,7 @@
 </section>
 <section class="lobby hidden">
     <!-- login success... waiting -->
+    <p>Name: {{ session['username'] }}</p>
     <h1>Lobby</h1>
 </section>
 <section class="multiple-choice hidden">
@@ -36,21 +37,16 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function () {
+        // try logging in with localStorage first
+        if (localStorage.getItem("username")) {
+            loginWith(localStorage.getItem("username"));
+        }
+
         // when the login button is pressed
         $('.login-area .login').click(function () {
             // login to get the session cookie
             var username = $(".enter-username").val();
-            $.post("{{ url_for('login') }}", {"username": username}, function (data) {
-                if (data['success']) {
-                    $(".login-area .help-text").text("");
-                    $(".login-area").addClass("hidden");
-                    $(".lobby").removeClass("hidden");
-                    localStorage.setItem("username", data["username"]);
-                    connectToGame();
-                } else {
-                    $(".login-area .help-text").text("username not registered. Please use the prefix of your utoronto email");
-                }
-            });
+            loginWith(username);
         });
     });
 
@@ -72,6 +68,7 @@
 
         socket.on('lobby', function() {
             switchView("lobby");
+            logout();
         });
 
         socket.on('logout_everyone', function() {
@@ -89,12 +86,30 @@
             $("section .lobby").removeClass("hidden");
         } else if (viewName === "login-area") {
             $("section .login-area").removeClass("hidden");
-            $.post("{{ url_for('logout') }}");
         } else if (viewName === "multiple-choice") {
             $("section .multiple-choice").removeClass("hidden");
         } else if (viewName === "queue-up") {
             $("section .queue-up").removeClass("hidden");
         }
+    }
+
+    function loginWith(username) {
+        $.post("{{ url_for('login') }}", {"username": username}, function (data) {
+            if (data['success']) {
+                $(".login-area .help-text").text("");
+                $(".login-area").addClass("hidden");
+                $(".lobby").removeClass("hidden");
+                localStorage.setItem("username", data["username"]);
+                connectToGame();
+            } else {
+                $(".login-area .help-text").text("username not registered. Please use the prefix of your utoronto email");
+            }
+        });
+    }
+
+    function logout() {
+        $.post("{{ url_for('logout') }}");
+        localStorage.removeItem("username");
     }
 
 </script>

@@ -109,7 +109,7 @@ def next_question():
     question = Question.query.filter_by(asked=False).first()
 
     game.emit("multiple_choice", question.get_dict())
-
+    
     question.asked = True
     db.session.add(question)
     db.session.commmit()

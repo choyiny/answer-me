@@ -48,7 +48,7 @@ class Game(Namespace):
             if player.player_name not in self.answered:
                 self.answered.add(player.player_name)
                 # score for this round = 30 seconds - time taken
-                player.score += int(3000 - round(time_taken, 3) * 10)
+                player.score += int((30 - round(time_taken, 3)) * 7)
                 db.session.add(player)
                 db.session.commit()
 

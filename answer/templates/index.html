@@ -99,6 +99,9 @@
 
         socket.on('multiple_choice', function(data) {
             $(".multiple-choice .mcq").text(data['question']);
+            $(".multiple-choice .answer").attr("disabled", null);
+            $(".multiple-choice .answer").css("border", "");
+
             $(".multiple-choice .answer1").text(data['answers'][0]);
             $(".multiple-choice .answer2").text(data['answers'][1]);
             $(".multiple-choice .answer3").text(data['answers'][2]);

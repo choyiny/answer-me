@@ -25,7 +25,12 @@
     <h1>Lobby</h1>
 </section>
 <section class="multiple-choice hidden">
-    <h1>Multiple Choice page</h1>
+    <h1>Multiple Choice section</h1>
+    <h2 class="mcq"></h2>
+    <button data-answer="1" class="answer1"></button>
+    <button data-answer="2" class="answer2"></button>
+    <button data-answer="3" class="answer3"></button>
+    <button data-answer="4" class="answer4"></button>
 </section>
 <section class="queue-up hidden">
     <h1>Queue up page</h1>
@@ -62,7 +67,11 @@
         });
 
         socket.on('multiple_choice', function(data) {
-            console.log(data);
+            $(".multiple-choice .mcq").text(data['question']);
+            $(".multiple-choice .answer1").text(data['answers'][0]);
+            $(".multiple-choice .answer2").text(data['answers'][1]);
+            $(".multiple-choice .answer3").text(data['answers'][2]);
+            $(".multiple-choice .answer4").text(data['answers'][3]);
             switchView("multiple-choice");
         });
 
@@ -83,13 +92,13 @@
     function switchView(viewName) {
         $("section").addClass("hidden");
         if (viewName === "lobby") {
-            $("section .lobby").removeClass("hidden");
+            $("section.lobby").removeClass("hidden");
         } else if (viewName === "login-area") {
-            $("section .login-area").removeClass("hidden");
+            $("section.login-area").removeClass("hidden");
         } else if (viewName === "multiple-choice") {
-            $("section .multiple-choice").removeClass("hidden");
+            $("section.multiple-choice").removeClass("hidden");
         } else if (viewName === "queue-up") {
-            $("section .queue-up").removeClass("hidden");
+            $("section.queue-up").removeClass("hidden");
         }
     }
 

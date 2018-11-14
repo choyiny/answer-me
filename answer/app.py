@@ -57,6 +57,11 @@ def logout():
     return gen_response({'success': True})
 
 
+@app.route("/admin/noveltyadminadmin")
+def admin():
+    return render_template("admin.html")
+
+
 @app.route("/admin/register")
 @require_admin
 def register_players():
@@ -99,7 +104,7 @@ def import_questions():
     db.session.commit()
 
 
-@app.route("/admin/next_question")
+@app.route("/admin/next_question", methods=['POST'])
 @require_admin
 def next_question():
     """
@@ -109,10 +114,10 @@ def next_question():
     question = Question.query.filter_by(asked=False).first()
 
     game.emit("multiple_choice", question.get_dict())
-    
+
     question.asked = True
     db.session.add(question)
-    db.session.commmit()
+    db.session.commit()
 
     return gen_response({'success': True})
 

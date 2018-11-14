@@ -116,11 +116,11 @@ def next_question():
         game.emit("multiple_choice", question_dict)
 
         # reset starting time and players who answered the question
-        game.starting_time = time.time()
-        game.answered = set()
+        game.reset()
 
-        # keep track of the question id in the game singleton
+        # keep track of the question id in the game and the correct answer text to display on tv
         game.correct_answer_idx = question_dict['answers'].index(question.correct_answer) + 1
+        game.correct_answer_text = question.correct_answer
 
         # the question is now asked and cannot be selected again
         question.asked = True

@@ -70,12 +70,18 @@
 
         // the multiple choice answer buttons have been pressed
         $(".multiple-choice .answer").click(function () {
-            if
+            var $btn = $(this);
+
+            // add border
+            $btn.css("border", "1px solid red");
+
+            if ($(this).attr("disabled") === "disabled") {
+                return false;
+            }
             // disable everything
             $(".multiple-choice .answer").attr("disabled", "disabled");
 
             // obtain what has been clicked
-            var $btn = $(this);
             var clicked_option = -1;
             if ($btn.hasClass("answer1")) {
                 clicked_option = 1;

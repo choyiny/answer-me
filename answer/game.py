@@ -16,6 +16,7 @@ class Game(Namespace):
     answer_queue = Queue()
 
     # correct answer's index
+    correct_answer_text = None
     correct_answer_idx = -1
 
     # starting time of the question
@@ -41,11 +42,13 @@ class Game(Namespace):
             # time taken to answer the question = end time - start time
             time_taken = time.time() - self.starting_time
 
+            print(f"{session['username']} answered in {time_taken}")
+
             player = get_current_player(session.get('username'))
             if player.player_name not in self.answered:
                 self.answered.add(player.player_name)
                 # score for this round = 30 seconds - time taken
-                player.score += int(300 - round(time_taken, 2) * 100)
+                player.score += int(3000 - round(time_taken, 3) * 10)
                 db.session.add(player)
                 db.session.commit()
 
@@ -66,3 +69,10 @@ class Game(Namespace):
 
             # dequeue the first person and emit to tv
             self.emit('player_clicked', first_player)
+
+    def reset(self):
+        """ helper method to reset everything """
+        self.starting_time = time.time()
+        self.answered = set()
+        self.correct_answer_idx = -1
+        self.correct_answer_text = None

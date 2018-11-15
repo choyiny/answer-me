@@ -6,11 +6,7 @@
 </head>
 <body>
 <section class="show-question">
-
-
-</section>
-<section class="show-leaderboard">
-
+    <h1 class="le-question"></h1>
 
 </section>
 <section class="lobby">
@@ -24,12 +20,12 @@
     $(document).ready(function () {
         var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
 
-        socket.on('show_leaderboard', function() {
+        socket.on('lobby', function() {
 
         });
 
-        socket.on('show_question', function () {
-
+        socket.on('multiple_choice', function (data) {
+            $(".le-question").text(data['question']);
         });
 
     });

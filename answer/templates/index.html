@@ -16,9 +16,23 @@
             margin-bottom: 20px;
         }
 
+
+
+        .enter-username {
+            background-color: #3a61a2;
+            position: absolute;
+            top: 80px;
+            right: 0;
+        }
+
+        .enter-nickname {
+            background-color: #3a61a2;
+        }
+
+
     </style>
 </head>
-<body>
+<body background="{{url_for('static',filename='images/login.png')}}" class="background-img">
 <section class="login-area">
     <input class="form-control enter-username" type="text" placeholder="Enter your username">
     <input class="form-control enter-nickname" type="text" placeholder="Preferred nickname">

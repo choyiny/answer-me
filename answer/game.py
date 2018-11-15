@@ -12,6 +12,12 @@ class Game(Namespace):
     Queue the players according to who click the button the fastest.
 
     """
+    # constants
+    STATISTICS = "stats"
+
+    # keep track of total players
+    players_logged_in = []
+
     # queue to keep track of who clicks the fastest in gamemode 2
     answer_queue = Queue()
 
@@ -26,14 +32,20 @@ class Game(Namespace):
     answered = set()
 
     def on_connect(self):
-        """
-        Authenticates the person trying to connect to the socket
-        :return: False if authentication failure
-        """
+        """ Return False if player does not have permission. Called when a player attempts to connect to the socket. """
         if session.get('username') is None:
             return False
         if get_current_player(session.get('username')) is None:
             return False
+        self.players_logged_in.append(session.get('username'))
+
+        self.emit(self.STATISTICS, self._get_stats())
+
+    def on_disconnect(self):
+        """ Called when a player disconnects from the socket. """
+        self.players_logged_in.remove(session.get('username'))
+
+        self.emit(self.STATISTICS, self._get_stats())
 
     def on_answer_option(self, data):
         """ data is formatted as {"answer_number": 1} """
@@ -48,9 +60,11 @@ class Game(Namespace):
             if player.player_name not in self.answered:
                 self.answered.add(player.player_name)
                 # score for this round = 30 seconds - time taken
-                player.score += self.calculate_score(time_taken)
+                player.score += self._calculate_score(time_taken)
                 db.session.add(player)
                 db.session.commit()
+
+        self.emit(self.STATISTICS, self._get_stats())
 
     def on_clicked_button(self):
         """
@@ -70,6 +84,8 @@ class Game(Namespace):
             # dequeue the first person and emit to tv
             self.emit('player_clicked', first_player)
 
+        self.emit(self.STATISTICS, self._get_stats())
+
     def reset(self):
         """ helper method to reset everything """
         self.starting_time = time.time()
@@ -77,6 +93,12 @@ class Game(Namespace):
         self.correct_answer_idx = -1
         self.correct_answer_text = None
 
-    def calculate_score(self, time_taken):
+    def _calculate_score(self, time_taken):
         """ Return score the player would get based on the time taken to answer the question. """
         return int(30 - time_taken) * 7
+
+    def _get_stats(self):
+        """ Returns the statistics of the game as dict. """
+        return {
+            "total_players": len(self.players_logged_in)
+        }

@@ -32,7 +32,6 @@ def index():
 
 
 @app.route("/tv")
-@require_admin
 def tv():
     """ TV index """
     return render_template("tv.html")

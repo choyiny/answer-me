@@ -48,7 +48,7 @@ class Game(Namespace):
             if player.player_name not in self.answered:
                 self.answered.add(player.player_name)
                 # score for this round = 30 seconds - time taken
-                player.score += int((30 - round(time_taken, 3)) * 7)
+                player.score += self.calculate_score(time_taken)
                 db.session.add(player)
                 db.session.commit()
 
@@ -76,3 +76,7 @@ class Game(Namespace):
         self.answered = set()
         self.correct_answer_idx = -1
         self.correct_answer_text = None
+
+    def calculate_score(self, time_taken):
+        """ Return score the player would get based on the time taken to answer the question. """
+        return int(30 - time_taken) * 7

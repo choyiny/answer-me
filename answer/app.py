@@ -157,5 +157,10 @@ def reset_everyone():
 @app.route("/admin/bump_to_lobby", methods=['POST'])
 @require_admin
 def back_to_lobby():
-    game.emit("lobby")
+    players = Player.query.order_by(Player.score).all()
+    d = []
+    for p in players:
+        d.append([p.nickname, p.score])
+    game.emit("lobby", d)
+    print(d)
     return gen_response({'success': True})

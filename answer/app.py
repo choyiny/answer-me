@@ -3,6 +3,8 @@ from flask_socketio import SocketIO
 import random
 import time
 
+from sqlalchemy.exc import IntegrityError
+
 from answer import config
 from answer.extensions import db
 from answer.helpers import gen_response, require_admin, get_current_player
@@ -30,7 +32,6 @@ def index():
 
 
 @app.route("/tv")
-@require_admin
 def tv():
     """ TV index """
     return render_template("tv.html")
@@ -48,16 +49,25 @@ def login():
         username = request.form.get('username')
         nickname = request.form.get('nickname')
         player = get_current_player(username)
+
+        # player can be found
         if player is not None:
             # update nickname
-            player.nickname = nickname
-            db.session.add(player)
-            db.session.commit()
+            if nickname is not None and len(nickname) > 0:
+                player.nickname = nickname
+                db.session.add(player)
+                try:
+                    db.session.commit()
+                except IntegrityError:
+                    return gen_response({'success': False, 'message': 'nickname not unique'})
 
+            # set user session
             session['username'] = username
+
             return gen_response({'success': True, 'username': username})
         else:
-            return gen_response({'success': False})
+            # player cannot be found in database
+            return gen_response({'success': False, 'message': 'must use registered email prefix'})
 
 
 @app.route("/logout", methods=["POST"])
@@ -81,6 +91,9 @@ def register_players():
     [to be filled in]
     """
     # TODO: complete this function
+
+    # the file handle for the file csv
+    file_handle = request.files['file']
 
     for name in ['choyin.yong', 'bowei.liu']:
         player = Player(player_name=name)
@@ -153,5 +166,9 @@ def reset_everyone():
 @app.route("/admin/bump_to_lobby", methods=['POST'])
 @require_admin
 def back_to_lobby():
-    game.emit("lobby")
+    players = Player.query.order_by(Player.score).all()
+    d = []
+    for p in players:
+        d.append([p.get_name(), p.score])
+    game.emit("lobby", d[::-1])
     return gen_response({'success': True})

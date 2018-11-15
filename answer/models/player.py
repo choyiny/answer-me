@@ -9,7 +9,7 @@ class Player(db.Model):
 
     player_name = db.Column(db.Text, nullable=False)
 
-    nickname = db.Column(db.Text)
+    nickname = db.Column(db.Text, unique=True)
 
     score = db.Column(db.BigInteger, default=0)
 

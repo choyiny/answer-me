@@ -9,6 +9,10 @@
             display: none;
         }
 
+        .help-text {
+            color: red;
+        }
+
         section.multiple-choice button {
             font-size: 5em;
             display: block;
@@ -43,8 +47,11 @@
 </section>
 <section class="lobby hidden">
     <!-- login success... waiting -->
-    <p>Name: {{ session['username'] }}</p>
     <h1>Lobby</h1>
+    <p class="first"></p>
+    <p class="second"></p>
+    <p class="third"></p>
+
 </section>
 <section class="multiple-choice hidden">
     <h1>Multiple Choice section</h1>
@@ -132,7 +139,14 @@
             switchView("multiple-choice");
         });
 
-        socket.on('lobby', function() {
+        socket.on('lobby', function(data) {
+            li = data
+            rank = ["first", "second", "third"]
+            for(i=0;i<rank.length;i++){
+                var name = li[i][0]
+                var score = li[i][1]
+                $(".lobby ."+rank[i]).text("Player: "+name+" Score: "+score)
+            }
             switchView("lobby");
         });
 
@@ -168,7 +182,8 @@
                 localStorage.setItem("username", data["username"]);
                 connectToGame();
             } else {
-                $(".login-area .help-text").text("username not registered. Please use the prefix of your utoronto email");
+                var message = data["message"];
+                $(".login-area .help-text").text(message);
             }
         });
     }

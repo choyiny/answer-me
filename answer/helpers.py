@@ -18,7 +18,7 @@ def gen_response(my_dict: dict):
 
 def require_admin(func):
     """ require the session to be admin """
-    from flask import session, redirect
+    from flask import session
 
     @wraps(func)
     def check_token(*args, **kwargs):
@@ -28,7 +28,7 @@ def require_admin(func):
             return func(*args, **kwargs)
         else:
             # redirect with login
-            return {"success": "False"}
+            return gen_response({"success": "False"})
     return check_token
 
 

@@ -9,6 +9,10 @@
             display: none;
         }
 
+        .help-text {
+            color: red;
+        }
+
         section.multiple-choice button {
             font-size: 5em;
             display: block;
@@ -154,7 +158,8 @@
                 localStorage.setItem("username", data["username"]);
                 connectToGame();
             } else {
-                $(".login-area .help-text").text("username not registered. Please use the prefix of your utoronto email");
+                var message = data["message"];
+                $(".login-area .help-text").text(message);
             }
         });
     }

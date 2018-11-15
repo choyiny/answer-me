@@ -3,6 +3,8 @@ from flask_socketio import SocketIO
 import random
 import time
 
+from sqlalchemy.exc import IntegrityError
+
 from answer import config
 from answer.extensions import db
 from answer.helpers import gen_response, require_admin, get_current_player
@@ -52,12 +54,14 @@ def login():
             # update nickname
             player.nickname = nickname
             db.session.add(player)
-            db.session.commit()
-
+            try:
+                db.session.commit()
+            except IntegrityError:
+                return gen_response({'success': False, 'message': 'nickname not unique'})
             session['username'] = username
             return gen_response({'success': True, 'username': username})
         else:
-            return gen_response({'success': False})
+            return gen_response({'success': False, 'message': 'must use registered email prefix'})
 
 
 @app.route("/logout", methods=["POST"])

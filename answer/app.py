@@ -50,17 +50,24 @@ def login():
         username = request.form.get('username')
         nickname = request.form.get('nickname')
         player = get_current_player(username)
+
+        # player can be found
         if player is not None:
             # update nickname
-            player.nickname = nickname
-            db.session.add(player)
-            try:
-                db.session.commit()
-            except IntegrityError:
-                return gen_response({'success': False, 'message': 'nickname not unique'})
+            if nickname is not None and len(nickname) > 0:
+                player.nickname = nickname
+                db.session.add(player)
+                try:
+                    db.session.commit()
+                except IntegrityError:
+                    return gen_response({'success': False, 'message': 'nickname not unique'})
+
+            # set user session
             session['username'] = username
+
             return gen_response({'success': True, 'username': username})
         else:
+            # player cannot be found in database
             return gen_response({'success': False, 'message': 'must use registered email prefix'})
 
 

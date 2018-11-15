@@ -8,13 +8,55 @@
         .hidden {
             display: none;
         }
+        .danger {
+            color: red;
+        }
 
     </style>
 </head>
 <body>
-<button class="btn btn-primary next-question">Next Question</button>
-<button class="btn btn-success move-to-lobby">Move everyone back to lobby</button>
-<button class="btn btn-danger reset-to-login">KICK EVERYONE OUT</button>
+<div class="container">
+    <h1 class="text-center" style="margin-top: 1em">李氏小兒科ADMIN</h1>
+    <hr>
+    <div class="container text-center">
+        <h2>Game controls</h2>
+        <button class="btn btn-primary next-question">Next Question</button>
+        <button class="btn btn-success move-to-lobby">Move everyone back to lobby</button>
+        <button class="btn btn-danger reset-to-login">KICK EVERYONE OUT</button>
+    </div>
+    <hr>
+    <div class="container text-center">
+        <h2>Live Statistics</h2>
+        <p>Total current players: <span class="total-players">N/A</span></p>
+        <p>Players answered question: <span class="answered-players">N/A</span></p>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Upload: Players</h3>
+            <p class="danger">Note: Will delete all old players.</p>
+            <form action="{{ url_for('register_players')}}" method="post" enctype=multipart/form-data>
+                <div class="form-group">
+                    <input class="form-control-file" type="file" name="file">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h3>Upload: Questions</h3>
+            <p class="danger">Note: Will delete all old questions.</p>
+            <form action="{{ url_for('import_questions')}}" method="post" enctype=multipart/form-data>
+                <div class="form-group">
+                    <input class="form-control-file" type="file" name="file">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+    </div>
+    <hr>
+</div>
+
 
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
@@ -22,7 +64,13 @@
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function () {
 
-        $.post("{{ url_for('login') }}", {"username": "novelty-admin!"});
+        $.post("{{ url_for('login') }}", {"username": "novelty-admin!"}, function () {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
+
+            socket.on('stats', function(data) {
+                $(".total-players").text(data["total_players"] + "");
+            });
+        });
 
         var timer = null;
 

@@ -92,6 +92,9 @@ def register_players():
     """
     # TODO: complete this function
 
+    # the file handle for the file csv
+    file_handle = request.files['file']
+
     for name in ['choyin.yong', 'bowei.liu']:
         player = Player(player_name=name)
         # add player to database queue

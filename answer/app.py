@@ -166,7 +166,6 @@ def back_to_lobby():
     players = Player.query.order_by(Player.score).all()
     d = []
     for p in players:
-        d.append([p.nickname, p.score])
-    game.emit("lobby", d)
-    print(d)
+        d.append([p.get_name(), p.score])
+    game.emit("lobby", d[::-1])
     return gen_response({'success': True})

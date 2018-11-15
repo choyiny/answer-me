@@ -10,6 +10,11 @@
 
 </section>
 <section class="lobby">
+    <p>TV</p>
+    <p class="first"></p>
+    <p class="second"></p>
+    <p class="third"></p>
+</section>
 
 
 </section>
@@ -20,8 +25,15 @@
     $(document).ready(function () {
         var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
 
-        socket.on('lobby', function() {
-
+        socket.on('lobby', function(data) {
+            li = data
+            console.log(li)
+            rank = ["first", "second", "third"]
+            for(i=0;i<rank.length;i++){
+                var name = li[i][0]
+                var score = li[i][1]
+                $(".lobby ."+rank[i]).text("Player: "+name+" Score: "+score)
+            }
         });
 
         socket.on('multiple_choice', function (data) {

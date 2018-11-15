@@ -126,8 +126,7 @@
         });
 
         socket.on('lobby', function(data) {
-            console.log(data);
-            li = data[1]
+            li = data
             rank = ["first", "second", "third"]
             for(i=0;i<rank.length;i++){
                 var name = li[i][0]

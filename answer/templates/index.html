@@ -21,6 +21,7 @@
 <body>
 <section class="login-area">
     <input class="form-control enter-username" type="text" placeholder="Enter your username">
+    <input class="form-control enter-nickname" type="text" placeholder="Preferred nickname">
     <p class="help-text"></p>
     <button class="btn btn-primary login">Login</button>
 
@@ -58,7 +59,8 @@
         $('.login-area .login').click(function () {
             // login to get the session cookie
             var username = $(".enter-username").val();
-            loginWith(username);
+            var nickname = $(".enter-nickname").val() || null;
+            loginWith(username, nickname);
         });
     });
 
@@ -143,8 +145,8 @@
         }
     }
 
-    function loginWith(username) {
-        $.post("{{ url_for('login') }}", {"username": username}, function (data) {
+    function loginWith(username, nickname=null) {
+        $.post("{{ url_for('login') }}", {"username": username, "nickname": nickname}, function (data) {
             if (data['success']) {
                 $(".login-area .help-text").text("");
                 $(".login-area").addClass("hidden");

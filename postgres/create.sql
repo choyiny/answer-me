@@ -1,6 +1,7 @@
 CREATE TABLE players (
         player_id SERIAL NOT NULL,
         player_name TEXT NOT NULL,
+        nickname TEXT,
         score INTEGER NOT NULL,
         PRIMARY KEY (player_id)
 );

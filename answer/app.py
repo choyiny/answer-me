@@ -5,7 +5,7 @@ import time
 
 from answer import config
 from answer.extensions import db
-from answer.helpers import gen_response, require_admin
+from answer.helpers import gen_response, require_admin, get_current_player
 from answer.models import Player, Question
 from answer.game import Game
 
@@ -39,10 +39,21 @@ def tv():
 @app.route("/login", methods=['POST'])
 def login():
     """ Login to obtain session cookie if available """
+    # admin
+    if request.form.get('username') == 'novelty-admin!':
+        session['username'] = request.form.get('username')
+        return gen_response({'success': True})
     # regular user
     if request.form.get('username') is not None:
         username = request.form.get('username')
-        if Player.query.filter_by(player_name=username).first() is not None:
+        nickname = request.form.get('nickname')
+        player = get_current_player(username)
+        if player is not None:
+            # update nickname
+            player.nickname = nickname
+            db.session.add(player)
+            db.session.commit()
+
             session['username'] = username
             return gen_response({'success': True, 'username': username})
         else:

@@ -28,7 +28,7 @@ def require_admin(func):
             return func(*args, **kwargs)
         else:
             # redirect with login
-            return redirect('/')
+            return {"success": "False"}
     return check_token
 
 

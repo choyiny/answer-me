@@ -24,13 +24,26 @@
 
         $.post("{{ url_for('login') }}", {"username": "novelty-admin!"});
 
+        var timer = null;
+
         $(".next-question").click(function () {
+            if(timer != null){
+                clearTimeout(timer);
+            }
+            timer = setTimeout(
+                function() {
+                    $(".move-to-lobby").click()
+                }
+                , 15000
+            );
             $.post("{{ url_for('next_question') }}", function (data) {
-                console.log(data);
             });
         });
 
         $(".move-to-lobby").click(function () {
+            if(timer != null){
+                clearTimeout(timer);
+            }
             $.post("{{ url_for('back_to_lobby') }}");
         });
 

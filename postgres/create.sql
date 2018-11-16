@@ -14,6 +14,7 @@ CREATE TABLE players (
         player_name TEXT NOT NULL,
         nickname TEXT,
         score BIGINT,
+        is_admin BOOLEAN NOT NULL,
         PRIMARY KEY (player_id),
         UNIQUE (nickname)
 );

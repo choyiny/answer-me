@@ -13,10 +13,13 @@ class Player(db.Model):
 
     score = db.Column(db.BigInteger, default=0)
 
+    is_admin = db.Column(db.Boolean, default=False)
+
     def __init__(self, player_name, nickname=None):
         self.player_name = player_name
         self.nickname = nickname
         self.score = 0
+        self.is_admin = False
 
     def __repr__(self):
         return f"<Player {self.player_name}>"

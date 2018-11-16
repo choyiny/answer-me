@@ -40,10 +40,6 @@ def tv():
 @app.route("/login", methods=['POST'])
 def login():
     """ Login to obtain session cookie if available """
-    # admin
-    if request.form.get('username') == 'novelty-admin!':
-        session['username'] = request.form.get('username')
-        return gen_response({'success': True})
     # regular user
     if request.form.get('username') is not None:
         username = request.form.get('username')

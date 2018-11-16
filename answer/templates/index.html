@@ -33,10 +33,27 @@
             background-color: #3a61a2;
         }
 
+        .background {
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .lobby-bg {
+            background-image: url({{url_for('static',filename='images/login.png')}})
+        }
+
+        .login-bg {
+            background-image: url({{url_for('static',filename='images/login.png')}})
+        }
+
+        .multiple-choice-bg {
+            background-image: url({{url_for('static',filename='images/login.png')}})
+        }
+
 
     </style>
 </head>
-<body background="{{url_for('static',filename='images/login.png')}}" class="background-img">
+<body class="background login-bg">
 <section class="login-area">
     <input class="form-control enter-username" type="text" placeholder="Enter your username">
     <input class="form-control enter-nickname" type="text" placeholder="Preferred nickname">

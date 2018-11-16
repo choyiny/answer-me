@@ -28,6 +28,7 @@
     <div class="container text-center">
         <h2>Live Statistics</h2>
         <p>Total current players: <span class="total-players">N/A</span></p>
+        <p>Current players: <span class="current-players">N/A</span></p>
         <p>Players answered question: <span class="answered-players">N/A</span></p>
     </div>
     <hr>
@@ -69,6 +70,7 @@
 
             socket.on('stats', function(data) {
                 $(".total-players").text(data["total_players"] + "");
+                $(".current-players").text(data["players"] + "");
             });
         });
 

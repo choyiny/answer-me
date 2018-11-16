@@ -16,10 +16,7 @@ class Game(Namespace):
     STATISTICS = "stats"
 
     # keep track of total players
-    players_logged_in = []
-
-    # queue to keep track of who clicks the fastest in gamemode 2
-    answer_queue = Queue()
+    players_logged_in = set()
 
     # correct answer's index
     correct_answer_text = None
@@ -35,15 +32,17 @@ class Game(Namespace):
         """ Return False if player does not have permission. Called when a player attempts to connect to the socket. """
         if session.get('username') is None:
             return False
-        if get_current_player(session.get('username')) is None:
+        player = get_current_player(session.get('username'))
+        if player is None:
             return False
-        self.players_logged_in.append(session.get('username'))
+        self.players_logged_in.add(player.get_name())
 
         self.emit(self.STATISTICS, self._get_stats())
 
     def on_disconnect(self):
         """ Called when a player disconnects from the socket. """
-        self.players_logged_in.remove(session.get('username'))
+        player = get_current_player(session.get('username'))
+        self.players_logged_in.discard(player.get_name())
 
         self.emit(self.STATISTICS, self._get_stats())
 
@@ -66,26 +65,6 @@ class Game(Namespace):
 
         self.emit(self.STATISTICS, self._get_stats())
 
-    def on_clicked_button(self):
-        """
-        A button has been clicked by a user
-
-        data will contain player name.
-        """
-        # get the player associated
-        player = get_current_player(session.get('username'))
-        if player is not None:
-            # put in the answer queue
-            self.answer_queue.put(player)
-
-            # dequeue the first one
-            first_player = self.answer_queue.get().get_dict()
-
-            # dequeue the first person and emit to tv
-            self.emit('player_clicked', first_player)
-
-        self.emit(self.STATISTICS, self._get_stats())
-
     def reset(self):
         """ helper method to reset everything """
         self.starting_time = time.time()
@@ -100,5 +79,6 @@ class Game(Namespace):
     def _get_stats(self):
         """ Returns the statistics of the game as dict. """
         return {
-            "total_players": len(self.players_logged_in)
+            "total_players": len(self.players_logged_in),
+            "players": list(self.players_logged_in)
         }

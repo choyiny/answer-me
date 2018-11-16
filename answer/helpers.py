@@ -23,7 +23,8 @@ def require_admin(func):
     @wraps(func)
     def check_token(*args, **kwargs):
         # obtain the user
-        if session.get('username') == "novelty-admin!":
+        player = get_current_player(session.get('username'))
+        if player is not None and player.is_admin:
             # proceed with original function
             return func(*args, **kwargs)
         else:

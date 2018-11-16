@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, session
 from flask_socketio import SocketIO
 import random
 import time
+import csv
 
 from sqlalchemy.exc import IntegrityError
 
@@ -86,17 +87,21 @@ def register_players():
 
     [to be filled in]
     """
-    # TODO: complete this function
-
     # the file handle for the file csv
     file_handle = request.files['file']
 
-    for name in ['choyin.yong', 'bowei.liu']:
+    player_list = []
+    for line in file_handle:
+        player_list.append(line.split("@")[0])
+
+    for name in player_list:
         player = Player(player_name=name)
         # add player to database queue
         db.session.add(player)
     # commit everything to the database
     db.session.commit()
+
+    return gen_response({'success': 'True'})
 
 
 @app.route("/admin/import_questions", methods=["POST"])
@@ -109,18 +114,29 @@ def import_questions():
     Question.query.delete()
     db.session.commit()
 
+    file_handle = request.files['file']
+
     questions_list = []
 
     # TODO: read some csv into list
+    csv_reader = csv.reader(file_handle, delimiter=',')
+    questions_list = []
 
-    # shuffle order here
-    random.shuffle(questions_list)
+    for question, correct, wrong1, wrong2, wrong3 in csv_reader:
+        d = {"question": question,
+             "correct": correct,
+             "wrong1": wrong1,
+             "wrong2": wrong2,
+             "wrong3": wrong3}
+        questions_list.append(d)
 
     # import into database for each
     for question_dict in questions_list:
         question_obj = Question(**question_dict)
         db.session.add(question_obj)
     db.session.commit()
+
+    return gen_response({'success': 'True'})
 
 
 @app.route("/admin/next_question", methods=['POST'])

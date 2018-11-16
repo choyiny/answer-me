@@ -24,7 +24,7 @@ def require_admin(func):
     def check_token(*args, **kwargs):
         # obtain the user
         player = get_current_player(session.get('username'))
-        if player.is_admin:
+        if player is not None and player.is_admin:
             # proceed with original function
             return func(*args, **kwargs)
         else:

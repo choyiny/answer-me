@@ -18,9 +18,6 @@ class Game(Namespace):
     # keep track of total players
     players_logged_in = []
 
-    # queue to keep track of who clicks the fastest in gamemode 2
-    answer_queue = Queue()
-
     # correct answer's index
     correct_answer_text = None
     correct_answer_idx = -1
@@ -63,26 +60,6 @@ class Game(Namespace):
                 player.score += self._calculate_score(time_taken)
                 db.session.add(player)
                 db.session.commit()
-
-        self.emit(self.STATISTICS, self._get_stats())
-
-    def on_clicked_button(self):
-        """
-        A button has been clicked by a user
-
-        data will contain player name.
-        """
-        # get the player associated
-        player = get_current_player(session.get('username'))
-        if player is not None:
-            # put in the answer queue
-            self.answer_queue.put(player)
-
-            # dequeue the first one
-            first_player = self.answer_queue.get().get_dict()
-
-            # dequeue the first person and emit to tv
-            self.emit('player_clicked', first_player)
 
         self.emit(self.STATISTICS, self._get_stats())
 

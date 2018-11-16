@@ -26,13 +26,13 @@
         var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
 
         socket.on('lobby', function(data) {
-            li = data
-            console.log(li)
-            rank = ["first", "second", "third"]
-            for(i=0;i<rank.length;i++){
-                var name = li[i][0]
-                var score = li[i][1]
-                $(".lobby ."+rank[i]).text("Player: "+name+" Score: "+score)
+            var li = data;
+            var rank = ["first", "second", "third"];
+            var i;
+            for(i = 0;i < rank.length; i++){
+                var name = li[i][0];
+                var score = li[i][1];
+                $(".lobby ." + rank[i]).text("Player: " + name + " Score: " + score);
             }
         });
 

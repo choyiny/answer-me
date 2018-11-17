@@ -150,6 +150,7 @@ def next_question():
 
         return gen_response({'success': True})
     else:
+        game.emit("multiple_choice", False)
         return gen_response({'success': False})
 
 

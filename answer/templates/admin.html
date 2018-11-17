@@ -65,27 +65,40 @@
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function () {
 
-        $.post("{{ url_for('login') }}", {"username": "novelty-admin!"}, function () {
-            var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/game')
 
+        $.post("{{ url_for('login') }}", {"username": "novelty-admin!"}, function () {
             socket.on('stats', function(data) {
                 $(".total-players").text(data["total_players"] + "");
                 $(".current-players").text(data["players"] + "");
             });
         });
 
+        var mc = true;
         var timer = null;
+
+        socket.on("multiple_choice", function(data){
+            if(data === false){
+                mc = false;
+                if(timer != null){
+                    clearTimeout(timer)
+                }
+            }
+        })
 
         $(".next-question").click(function () {
             if(timer != null){
                 clearTimeout(timer);
             }
-            timer = setTimeout(
-                function() {
-                    $(".move-to-lobby").click()
-                }
-                , 15000
-            );
+            if(mc === true){
+                console.log("created timer")
+                timer = setTimeout(
+                    function() {
+                        $(".move-to-lobby").click()
+                    }
+                    , 15000
+                );
+            }
             $.post("{{ url_for('next_question') }}", function (data) {
             });
         });

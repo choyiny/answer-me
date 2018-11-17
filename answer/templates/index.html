@@ -59,9 +59,10 @@
     <input class="form-control enter-nickname" type="text" placeholder="Preferred nickname">
     <p class="help-text"></p>
     <button class="btn btn-primary login">Login</button>
-
-
 </section>
+
+<h2 class="nickname"></h2>
+
 <section class="lobby hidden">
     <!-- login success... waiting -->
     <h1>Lobby</h1>
@@ -81,6 +82,11 @@
 <section class="queue-up hidden">
     <h1>Queue up page</h1>
     <button class="click-me">click me to queue</button>
+</section>
+
+<section class="quick hidden">
+    <h1>Quick Reaction</h1>
+    <button class="quickbutton">click me</button>
 </section>
 
 </body>
@@ -152,16 +158,32 @@
 
         });
 
-        socket.on('multiple_choice', function(data) {
-            $(".multiple-choice .mcq").text(data['question']);
-            $(".multiple-choice .answer").attr("disabled", null);
-            $(".multiple-choice .answer").css("border", "");
+        socket.on("quick", function(data){
+            $(".quickbutton").attr("disabled", false);
+        })
 
-            $(".multiple-choice .answer1").text(data['answers'][0]);
-            $(".multiple-choice .answer2").text(data['answers'][1]);
-            $(".multiple-choice .answer3").text(data['answers'][2]);
-            $(".multiple-choice .answer4").text(data['answers'][3]);
-            switchView("multiple-choice");
+
+        $(".quickbutton").click(function(){
+            var name = $(".nickname").text()
+            $(this).attr("disabled", true);
+            socket.emit("quick_next", name);
+        })
+
+        socket.on('multiple_choice', function(data) {
+            if(data === false){
+                switchView("quick")
+            }
+            else{
+                $(".multiple-choice .mcq").text(data['question']);
+                $(".multiple-choice .answer").attr("disabled", null);
+                $(".multiple-choice .answer").css("border", "");
+
+                $(".multiple-choice .answer1").text(data['answers'][0]);
+                $(".multiple-choice .answer2").text(data['answers'][1]);
+                $(".multiple-choice .answer3").text(data['answers'][2]);
+                $(".multiple-choice .answer4").text(data['answers'][3]);
+                switchView("multiple-choice");
+            }
         });
 
         socket.on('lobby', function(data) {
@@ -188,6 +210,8 @@
             $("section.multiple-choice").removeClass("hidden");
         } else if (viewName === "queue-up") {
             $("section.queue-up").removeClass("hidden");
+        } else if (viewName === "quick"){
+            $("section.quick").removeClass("hidden")
         }
     }
 
@@ -197,6 +221,7 @@
                 $(".login-area .help-text").text("");
                 $(".login-area").addClass("hidden");
                 $(".lobby").removeClass("hidden");
+                $(".nickname").text(nickname)
                 localStorage.setItem("username", data["username"]);
                 connectToGame();
             } else {

@@ -43,7 +43,6 @@
         socket.on('lobby', function(data) {
             li = data
             console.log(li)
-            rank = ["first", "second", "third"]
             $(".firstName").text(li[0][0])
             $(".firstScore").text(li[0][1])
             $(".secondName").text(li[1][0])

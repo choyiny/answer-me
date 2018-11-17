@@ -74,8 +74,9 @@ def logout():
 
 
 @app.route("/lee/admin")
+@require_admin
 def admin():
-    """ Auto logs in as admin and gives control panel """
+    """ Admin control panel """
     return render_template("admin.html")
 
 

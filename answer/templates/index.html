@@ -20,13 +20,17 @@
             margin-bottom: 20px;
         }
 
-
+        section.login-area {
+            bottom: 250px;
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-left: 24em;
+            margin-right: auto;
+            position: absolute;
+        }
 
         .enter-username {
             background-color: #3a61a2;
-            position: absolute;
-            top: 80px;
-            right: 0;
         }
 
         .enter-nickname {
@@ -43,7 +47,12 @@
         }
 
         .login-bg {
-            background-image: url({{url_for('static',filename='images/login.png')}})
+            background-image: url({{url_for('static',filename='images/lobby.png')}})
+        }
+
+        .login {
+          padding-left: 4em;
+          position: absolute;
         }
 
         .multiple-choice-bg {

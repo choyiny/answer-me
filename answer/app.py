@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, session
 from flask_socketio import SocketIO
 import random
 import time
+import csv
 
 from sqlalchemy.exc import IntegrityError
 
@@ -73,8 +74,9 @@ def logout():
 
 
 @app.route("/lee/admin")
+@require_admin
 def admin():
-    """ Auto logs in as admin and gives control panel """
+    """ Admin control panel """
     return render_template("admin.html")
 
 
@@ -86,17 +88,15 @@ def register_players():
 
     [to be filled in]
     """
-    # TODO: complete this function
-
     # the file handle for the file csv
     file_handle = request.files['file']
 
-    for name in ['choyin.yong', 'bowei.liu']:
-        player = Player(player_name=name)
-        # add player to database queue
+    for line in file_handle:
+        player = Player(player_name=line.split("@")[0])
         db.session.add(player)
-    # commit everything to the database
     db.session.commit()
+
+    return gen_response({'success': 'True'})
 
 
 @app.route("/admin/import_questions", methods=["POST"])
@@ -109,18 +109,20 @@ def import_questions():
     Question.query.delete()
     db.session.commit()
 
-    questions_list = []
+    file_handle = request.files['file']
+
+    if not file_handle:
+        return gen_response({'success': False})
 
     # TODO: read some csv into list
+    csv_reader = csv.reader([line.decode("utf-8") for line in file_handle.readlines()])
 
-    # shuffle order here
-    random.shuffle(questions_list)
-
-    # import into database for each
-    for question_dict in questions_list:
-        question_obj = Question(**question_dict)
+    for question, correct, wrong1, wrong2, wrong3 in csv_reader:
+        question_obj = Question(question=question, correct=correct, wrong1=wrong1, wrong2=wrong2, wrong3=wrong3)
         db.session.add(question_obj)
     db.session.commit()
+
+    return gen_response({'success': True})
 
 
 @app.route("/admin/next_question", methods=['POST'])
@@ -149,6 +151,7 @@ def next_question():
 
         return gen_response({'success': True})
     else:
+        game.emit("multiple_choice", False)
         return gen_response({'success': False})
 
 

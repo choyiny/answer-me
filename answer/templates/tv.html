@@ -11,9 +11,24 @@
 </section>
 <section class="lobby">
     <p>TV</p>
-    <p class="first"></p>
-    <p class="second"></p>
-    <p class="third"></p>
+    <table>
+        <tr class="first">
+            <td class="firstName"></td>
+            <td class="firstScore"></td>
+        </tr>
+        <tr class="second">
+            <td class="secondName"></td>
+            <td class="secondScore"></td>
+        </tr>
+        <tr class="third">
+            <td class="thirdName"></td>
+            <td class="thirdScore"></td>
+        </tr>
+    </table>
+</section>
+
+<section class="answer">
+    
 </section>
 
 
@@ -28,12 +43,12 @@
         socket.on('lobby', function(data) {
             li = data
             console.log(li)
-            rank = ["first", "second", "third"]
-            for(i=0;i<rank.length;i++){
-                var name = li[i][0]
-                var score = li[i][1]
-                $(".lobby ."+rank[i]).text("Player: "+name+" Score: "+score)
-            }
+            $(".firstName").text(li[0][0])
+            $(".firstScore").text(li[0][1])
+            $(".secondName").text(li[1][0])
+            $(".secondScore").text(li[1][1])
+            $(".thirdName").text(li[2][0])
+            $(".thirdScore").text(li[2][1])
         });
 
         socket.on('multiple_choice', function (data) {

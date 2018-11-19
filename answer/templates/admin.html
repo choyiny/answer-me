@@ -28,6 +28,7 @@
     <div class="container text-center">
         <h2>Live Statistics</h2>
         <p>Total current players: <span class="total-players">N/A</span></p>
+        <p>Current players: <span class="current-players">N/A</span></p>
         <p>Players answered question: <span class="answered-players">N/A</span></p>
     </div>
     <hr>
@@ -64,21 +65,46 @@
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function () {
 
-        $.post("{{ url_for('login') }}", {"username": "novelty-admin!"}, function () {
-            var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
 
-            socket.on('stats', function(data) {
-                $(".total-players").text(data["total_players"] + "");
-            });
+        socket.on('stats', function(data) {
+            $(".total-players").text(data["total_players"] + "");
+            $(".current-players").text(data["players"] + "");
+        });
+
+        var mc = true;
+        var timer = null;
+
+        socket.on("multiple_choice", function(data){
+            if(data === false){
+                mc = false;
+                if(timer != null){
+                    clearTimeout(timer)
+                }
+            }
         });
 
         $(".next-question").click(function () {
+            if(timer != null){
+                clearTimeout(timer);
+            }
+            if(mc === true){
+                console.log("created timer")
+                timer = setTimeout(
+                    function() {
+                        $(".move-to-lobby").click()
+                    }
+                    , 15000
+                );
+            }
             $.post("{{ url_for('next_question') }}", function (data) {
-                console.log(data);
             });
         });
 
         $(".move-to-lobby").click(function () {
+            if(timer != null){
+                clearTimeout(timer);
+            }
             $.post("{{ url_for('back_to_lobby') }}");
         });
 

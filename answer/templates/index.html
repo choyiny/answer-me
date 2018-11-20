@@ -101,13 +101,6 @@
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function () {
 
-        setTimeout(
-            function print() {
-                console.log("DONE")
-            },
-            2000
-        )
-
         // try logging in with localStorage first
         if (localStorage.getItem("username")) {
             loginWith(localStorage.getItem("username"));
@@ -225,9 +218,8 @@
         $.post("{{ url_for('login') }}", {"username": username, "nickname": nickname}, function (data) {
             if (data['success']) {
                 $(".login-area .help-text").text("");
-                $(".login-area").addClass("hidden");
-                $(".lobby").removeClass("hidden");
-                $(".nickname").text(nickname)
+                switchView("lobby");
+                $(".nickname").text(nickname);
                 localStorage.setItem("username", data["username"]);
                 connectToGame();
             } else {

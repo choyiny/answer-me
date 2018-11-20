@@ -21,21 +21,26 @@
         }
 
         section.login-area {
-            margin-left: 24em;
+            margin-left: 13em;
             bottom: 250px;
             position: absolute;
         }
 
         .login {
-            margin-left: 4em;
+            margin-left: 4.5em;
+            font-size: 3em;
         }
 
         .enter-username {
-            background-color: #3a61a2;
+            background-color: white;
+            font-size: 3em;
+            padding: 1em;
         }
 
         .enter-nickname {
-            background-color: #3a61a2;
+            background-color: white;
+            font-size: 3em;
+            padding: 1em;
         }
 
         .background {
@@ -51,7 +56,7 @@
             background-image: url({{url_for('static',filename='images/login.png')}})
         }
 
-        .multiple-choice {
+        .mc-bg {
             background-image: url({{url_for('static',filename='images/MC.png')}})
         }
 
@@ -203,10 +208,12 @@
         $("section").addClass("hidden");
         if (viewName === "lobby") {
             $("section.lobby").removeClass("hidden");
+            $("body").attr("class", "background lobby-bg");
         } else if (viewName === "login-area") {
             $("section.login-area").removeClass("hidden");
         } else if (viewName === "multiple-choice") {
             $("section.multiple-choice").removeClass("hidden");
+            $("body").attr("class", "backfround mc-bg");
         } else if (viewName === "queue-up") {
             $("section.queue-up").removeClass("hidden");
         } else if (viewName === "quick"){

@@ -44,16 +44,17 @@
         }
 
         .lobby-bg {
-            background-image: url({{url_for('static',filename='images/login.png')}})
-        }
-
-        .login-bg {
             background-image: url({{url_for('static',filename='images/lobby.png')}})
         }
 
-        .multiple-choice-bg {
+        .login-bg {
             background-image: url({{url_for('static',filename='images/login.png')}})
         }
+
+        .multiple-choice {
+            background-image: url({{url_for('static',filename='images/MC.png')}})
+        }
+
 
 
     </style>
@@ -70,7 +71,7 @@
 
 <section class="lobby hidden">
     <!-- login success... waiting -->
-    <h1>Lobby</h1>
+    <h1 style="color: white;">Lobby</h1>
     <p class="first"></p>
     <p class="second"></p>
     <p class="third"></p>

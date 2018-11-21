@@ -9,8 +9,8 @@ from sqlalchemy.exc import IntegrityError
 
 from answer import config
 from answer.extensions import db
-from answer.helpers import gen_response, require_admin, get_current_player
-from answer.models import Player, Question
+from answer.helpers import gen_response, require_admin, get_current_player, get_player_by_nickname
+from answer.models import Player, Question, QuickQuestion
 from answer.game import Game
 
 # initialize app with config params
@@ -164,6 +164,10 @@ def reset_everyone():
 @app.route("/admin/bump_to_lobby", methods=['POST'])
 @require_admin
 def back_to_lobby():
+    if quick_answer_queue.qsize() > 0:
+        previous = quick_answer_queue.get()
+        game.add_score(get_player_by_nickname(previous), 200)
+        quick_answer_queue.queue.clear()
     players = Player.query.order_by(Player.score).all()
     d = []
     for p in players:
@@ -182,8 +186,20 @@ def switch_to_quick():
 @app.route("/admin/next_quick_question", methods=['POST'])
 @require_admin
 def next_quick_question():
-    quick_answer_queue.queue.clear()
-    return gen_response({'success':True})
+    question: QuickQuestion = QuickQuestion.query.filter_by(asked=False).first()
+    if question:
+        question_dict = question.get_dict()
+
+        # keep track of the question id in the game and the correct answer text to display on tv
+        game.correct_answer_idx = question_dict['answers'].index(question.correct_answer) + 1
+        game.correct_answer_text = question.correct_answer
+
+        # the question is now asked and cannot be selected again
+        question.asked = True
+        db.session.add(question)
+        db.session.commit()
+        return gen_response({'success': True})
+    return gen_response({'success':False})
 
 
 @socketio.on("first_click", namespace="/game")
@@ -191,14 +207,14 @@ def first_guy_click(data):
     if quick_answer_queue.qsize() == 0:
         game.emit("first_guy", data)
     quick_answer_queue.put(data)
-    print("PUT:", data, "SIZE:", quick_answer_queue.qsize())
     return gen_response({'success': True})
 
 
 @app.route("/admin/next_player", methods=['POST'])
 @require_admin
 def next_player():
-    print("SIZE:", quick_answer_queue.qsize())
+    previous = quick_answer_queue.get()
+    game.add_score(get_player_by_nickname(previous), -200)
     if quick_answer_queue.qsize() > 0:
-        game.emit("first_guy", quick_answer_queue.get())
+        game.emit("first_guy", quick_answer_queue.queue[0])
     return gen_response({'success': True})

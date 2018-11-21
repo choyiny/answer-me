@@ -3,7 +3,7 @@ from queue import Queue
 from flask_socketio import Namespace
 from flask import session
 
-from answer.helpers import get_current_player
+from answer.helpers import get_current_player, get_player_by_nickname
 from answer.extensions import db
 
 
@@ -64,6 +64,13 @@ class Game(Namespace):
                 db.session.commit()
 
         self.emit(self.STATISTICS, self._get_stats())
+    
+    def add_score(self, player, amount):
+        print("Player is adding score:", player, amount)
+        if player is not None:
+            player.score += amount
+            db.session.add(player)
+            db.session.commit()
 
     def reset(self):
         """ helper method to reset everything """

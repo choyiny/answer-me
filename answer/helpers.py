@@ -35,3 +35,7 @@ def require_admin(func):
 
 def get_current_player(username):
     return Player.query.filter_by(player_name=username).first()
+
+
+def get_player_by_nickname(nick):
+    return Player.query.filter_by(nickname=nick).first()

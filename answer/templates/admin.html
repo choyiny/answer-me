@@ -98,9 +98,18 @@
         });
 
         $(".quick-answer-section").click(function(){
-            mc = false;
-            $.post("{{ url_for('switch_to_quick') }}", function (data) {
-            });
+            console.log("NEXT QIANGDATI clicked")
+            console.log(mc)
+            if(mc === true){
+                mc = false;
+                $.post("{{ url_for('switch_to_quick') }}", function (data) {
+                });
+            }
+            else{
+                console.log("REQUESTED")
+                $.post("{{ url_for('next_quick_question') }}", function (data) {
+                });
+            }
         });
 
         $(".next-player").click(function(){
@@ -122,11 +131,6 @@
                 );
                 $.post("{{ url_for('next_question') }}", function (data) {
                 });
-            }
-            else{
-                $.post("{{ url_for('next_quick_question') }}", function (data) {
-                });
-                // Quick section here
             }
         });
 

@@ -16,7 +16,7 @@
         }
 
         section.multiple-choice .answer {
-            font-size: 5em;
+            font-size: 2em;
             display: block;
             width: 95%;
             left: 2.5%;
@@ -34,7 +34,7 @@
             position: absolute;
         }
 
-        .login {
+        section.login-area .login {
             position: absolute;
             bottom: 4em;
             width: 80%;
@@ -78,10 +78,10 @@
             display: block;
             width: 86%;
             left: 7%;
-            height: 9.5em;
+            height: 2.8em;
             border-radius: 4em;
             position: absolute;
-            top: 4.4em;
+            top: 1.6em;
         }
 
 
@@ -106,10 +106,11 @@
 </section>
 <section class="multiple-choice hidden">
     <h2 class="mcq" style="display:none;color: white; font-size:5em;"></h2>
-    <button class="btn btn-primary answer answer1" style="bottom:5em"></button>
-    <button class="btn btn-primary answer answer2" style="bottom:8em"></button>
-    <button class="btn btn-primary answer answer3" style="bottom:11em"></button>
-    <button class="btn btn-primary answer answer4" style="bottom:14em"></button>
+    <button class="btn btn-primary answer answer1" style="bottom:2em"></button>
+    <button class="btn btn-primary answer answer2" style="bottom:5em"></button>
+    <button class="btn btn-primary answer answer3" style="bottom:8em"></button>
+    <button class="btn btn-primary answer answer4" style="bottom:11em"></button>
+    <button class="btn btn-primary answer answer5" style="bottom:14em"></button>
 </section>
 <section class="queue-up hidden">
     <h1>Queue up page</h1>
@@ -176,6 +177,8 @@
                 clicked_option = 3;
             } else if ($btn.hasClass("answer4")) {
                 clicked_option = 4;
+            } else if ($btn.hasClass("answer5")) {
+                clicked_option = 5;
             }
             // emit the "correct answer"
             socket.emit('answer_option', {"answer_number": clicked_option})
@@ -202,6 +205,7 @@
             $(".multiple-choice .answer2").text(data['answers'][1]);
             $(".multiple-choice .answer3").text(data['answers'][2]);
             $(".multiple-choice .answer4").text(data['answers'][3]);
+            $(".multiple-choice .answer5").text(data['answers'][4]);
             switchView("multiple-choice");
         });
 

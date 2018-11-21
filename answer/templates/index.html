@@ -187,15 +187,15 @@
 
         socket.on("quick", function(data){
             $(".quickbutton").attr("disabled", false);
-            switchView("quick")
-        })
+            switchView("quick");
+        });
 
 
         $(".quickbutton").click(function(){
-            var name = $(".nickname").text()
+            var name = $(".nickname").text();
             $(this).attr("disabled", true);
-            socket.emit("first_click", name)
-        })
+            socket.emit("first_click", name);
+        });
 
         socket.on('multiple_choice', function(data) {
             $(".multiple-choice .mcq").text(data['question']);
@@ -209,7 +209,7 @@
             switchView("multiple-choice");
         });
 
-        socket.on('lobby', function(data) {
+        socket.on('lobby', function() {
             switchView("lobby");
         });
 
@@ -236,7 +236,7 @@
         } else if (viewName === "queue-up") {
             $("section.queue-up").removeClass("hidden");
         } else if (viewName === "quick"){
-            $("section.quick").removeClass("hidden")
+            $("section.quick").removeClass("hidden");
             $("body").attr("class", "background question-bg");
         }
     }

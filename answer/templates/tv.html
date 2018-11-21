@@ -11,7 +11,7 @@
 </section>
 <section class="lobby">
     <p>TV</p>
-    <table>
+    <table class="leaderboard">
         <tr class="first">
             <td class="firstName"></td>
             <td class="firstScore"></td>
@@ -45,20 +45,22 @@
         var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
 
         socket.on('lobby', function(data) {
-            $(".firstName").text(data[0][0])
-            $(".firstScore").text(data[0][1])
-            $(".secondName").text(data[1][0])
-            $(".secondScore").text(data[1][1])
-            $(".thirdName").text(data[2][0])
-            $(".thirdScore").text(data[2][1])
+            $(".firstName").text(data[0][0]);
+            $(".firstScore").text(data[0][1]);
+            $(".secondName").text(data[1][0]);
+            $(".secondScore").text(data[1][1]);
+            $(".thirdName").text(data[2][0]);
+            $(".thirdScore").text(data[2][1]);
+            $(".leaderboard").show();
         });
 
         socket.on('multiple_choice', function (data) {
             $(".le-question").text(data['question']);
+            $(".leaderboard").hide();
         });
 
         socket.on("first_guy", function(data){
-            $(".first_guy_name").text(data)
+            $(".first_guy_name").text(data);
         });
 
     });

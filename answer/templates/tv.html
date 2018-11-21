@@ -45,14 +45,12 @@
         var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
 
         socket.on('lobby', function(data) {
-            li = data
-            console.log(li)
-            $(".firstName").text(li[0][0])
-            $(".firstScore").text(li[0][1])
-            $(".secondName").text(li[1][0])
-            $(".secondScore").text(li[1][1])
-            $(".thirdName").text(li[2][0])
-            $(".thirdScore").text(li[2][1])
+            $(".firstName").text(data[0][0])
+            $(".firstScore").text(data[0][1])
+            $(".secondName").text(data[1][0])
+            $(".secondScore").text(data[1][1])
+            $(".thirdName").text(data[2][0])
+            $(".thirdScore").text(data[2][1])
         });
 
         socket.on('multiple_choice', function (data) {

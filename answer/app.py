@@ -116,7 +116,6 @@ def import_questions():
     if not file_handle:
         return gen_response({'success': False})
 
-    # TODO: read some csv into list
     csv_reader = csv.reader([line.decode("utf-8") for line in file_handle.readlines()])
 
     for question, correct, wrong1, wrong2, wrong3 in csv_reader:

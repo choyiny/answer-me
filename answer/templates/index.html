@@ -13,15 +13,22 @@
             color: red;
         }
 
-        section.multiple-choice {
-            top: 500px;
-        }
 
         section.multiple-choice button {
             font-size: 5em;
             display: block;
             width: 100%;
             margin-bottom: 20px;
+        }
+
+        .answer1 {
+            bottom: 1400px;
+            position: absolute;
+        }
+
+        .answer2 {
+            bottom: 1350px;
+            position: absolute;
         }
 
         section.login-area {
@@ -64,13 +71,12 @@
             background-image: url({{url_for('static',filename='images/MC.png')}})
         }
 
-        section.quick {
-            top: 500px;
-        }
 
         section.quick button {
             font-size: 3em;
             margin-left: 8.25em;
+            position: absolute;
+            bottom: 1400px;
         }
 
 

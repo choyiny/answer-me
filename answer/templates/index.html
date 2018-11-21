@@ -13,6 +13,10 @@
             color: red;
         }
 
+        section.multiple-choice {
+            top: 500px;
+        }
+
         section.multiple-choice button {
             font-size: 5em;
             display: block;
@@ -56,10 +60,18 @@
             background-image: url({{url_for('static',filename='images/login.png')}})
         }
 
-        .mc-bg {
+        .question-bg {
             background-image: url({{url_for('static',filename='images/MC.png')}})
         }
 
+        section.quick {
+            top: 500px;
+        }
+
+        section.quick button {
+            font-size: 3em;
+            margin-left: 8.25em;
+        }
 
 
     </style>
@@ -76,15 +88,15 @@
 
 <section class="lobby hidden">
     <!-- login success... waiting -->
-    <h1 style="color: white;">Lobby</h1>
+    <h1 style="color: white; font-size: 5em; text-align: center;">Lobby</h1>
     <p class="first"></p>
     <p class="second"></p>
     <p class="third"></p>
 
 </section>
 <section class="multiple-choice hidden">
-    <h1>Multiple Choice section</h1>
-    <h2 class="mcq"></h2>
+    <h1 style="color: grey; font-size: 4em; text-align: center;">Multiple Choice section</h1>
+    <h2 class="mcq" style="color: white; font-size:5em;"></h2>
     <button class="btn btn-primary answer answer1"></button>
     <button class="btn btn-primary answer answer2"></button>
     <button class="btn btn-primary answer answer3"></button>
@@ -96,8 +108,8 @@
 </section>
 
 <section class="quick hidden">
-    <h1>Quick Reaction</h1>
-    <button class="quickbutton">click me</button>
+    <h1 style="color: white; font-size: 5em; text-align: center;">Quick Reaction</h1>
+    <button class="btn btn-default quickbutton">click me</button>
 </section>
 
 </body>
@@ -213,11 +225,12 @@
             $("section.login-area").removeClass("hidden");
         } else if (viewName === "multiple-choice") {
             $("section.multiple-choice").removeClass("hidden");
-            $("body").attr("class", "backfround mc-bg");
+            $("body").attr("class", "background question-bg");
         } else if (viewName === "queue-up") {
             $("section.queue-up").removeClass("hidden");
         } else if (viewName === "quick"){
             $("section.quick").removeClass("hidden")
+            $("body").attr("class", "background question-bg");
         }
     }
 

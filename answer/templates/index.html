@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Novelty - Answer Me</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <style>
         .hidden {
@@ -13,38 +15,44 @@
             color: red;
         }
 
-        section.multiple-choice {
-            top: 500px;
-        }
-
-        section.multiple-choice button {
-            font-size: 5em;
+        section.multiple-choice .answer {
+            font-size: 2em;
             display: block;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        section.login-area {
-            margin-left: 13em;
-            bottom: 250px;
+            width: 95%;
+            left: 2.5%;
+            height: 2.5em;
             position: absolute;
         }
 
-        .login {
-            margin-left: 4.5em;
-            font-size: 3em;
+        .answer1 {
+            bottom: 1400px;
+            position: absolute;
         }
 
-        .enter-username {
-            background-color: white;
-            font-size: 3em;
-            padding: 1em;
+        .answer2 {
+            bottom: 1350px;
+            position: absolute;
         }
 
-        .enter-nickname {
-            background-color: white;
-            font-size: 3em;
-            padding: 1em;
+        section.login-area .login {
+            position: absolute;
+            bottom: 4em;
+            width: 80%;
+            left: 10%;
+        }
+
+        section.login-area .enter-username {
+            position: absolute;
+            bottom: 10em;
+            width: 80%;
+            left: 10%;
+        }
+
+        section.login-area .enter-nickname {
+            position: absolute;
+            bottom: 7em;
+            width: 80%;
+            left: 10%;
         }
 
         .background {
@@ -64,13 +72,16 @@
             background-image: url({{url_for('static',filename='images/MC.png')}})
         }
 
-        section.quick {
-            top: 500px;
-        }
 
-        section.quick button {
-            font-size: 3em;
-            margin-left: 8.25em;
+        section.quick button.quickbutton {
+            font-size: 5em;
+            display: block;
+            width: 86%;
+            left: 7%;
+            height: 2.8em;
+            border-radius: 4em;
+            position: absolute;
+            top: 1.6em;
         }
 
 
@@ -81,26 +92,25 @@
     <input class="form-control enter-username" type="text" placeholder="Enter your username">
     <input class="form-control enter-nickname" type="text" placeholder="Preferred nickname">
     <p class="help-text"></p>
-    <button class="btn btn-primary login">Login</button>
+    <button class="btn btn-primary login">Join Game</button>
 </section>
 
-<h2 class="nickname"></h2>
+<h2 class="nickname" style="display:none"></h2>
 
 <section class="lobby hidden">
     <!-- login success... waiting -->
-    <h1 style="color: white; font-size: 5em; text-align: center;">Lobby</h1>
     <p class="first"></p>
     <p class="second"></p>
     <p class="third"></p>
 
 </section>
 <section class="multiple-choice hidden">
-    <h1 style="color: grey; font-size: 4em; text-align: center;">Multiple Choice section</h1>
-    <h2 class="mcq" style="color: white; font-size:5em;"></h2>
-    <button class="btn btn-primary answer answer1"></button>
-    <button class="btn btn-primary answer answer2"></button>
-    <button class="btn btn-primary answer answer3"></button>
-    <button class="btn btn-primary answer answer4"></button>
+    <h2 class="mcq" style="display:none;color: white; font-size:5em;"></h2>
+    <button class="btn btn-primary answer answer1" style="bottom:2em"></button>
+    <button class="btn btn-primary answer answer2" style="bottom:5em"></button>
+    <button class="btn btn-primary answer answer3" style="bottom:8em"></button>
+    <button class="btn btn-primary answer answer4" style="bottom:11em"></button>
+    <button class="btn btn-primary answer answer5" style="bottom:14em"></button>
 </section>
 <section class="queue-up hidden">
     <h1>Queue up page</h1>
@@ -108,8 +118,7 @@
 </section>
 
 <section class="quick hidden">
-    <h1 style="color: white; font-size: 5em; text-align: center;">Quick Reaction</h1>
-    <button class="btn btn-default quickbutton">click me</button>
+    <button class="btn quickbutton"></button>
 </section>
 
 </body>
@@ -150,7 +159,7 @@
             var $btn = $(this);
 
             // add border
-            $btn.css("border", "1em solid red");
+            $btn.css("border", "3px solid yellow");
 
             if ($(this).attr("disabled") === "disabled") {
                 return false;
@@ -168,6 +177,8 @@
                 clicked_option = 3;
             } else if ($btn.hasClass("answer4")) {
                 clicked_option = 4;
+            } else if ($btn.hasClass("answer5")) {
+                clicked_option = 5;
             }
             // emit the "correct answer"
             socket.emit('answer_option', {"answer_number": clicked_option})
@@ -194,6 +205,7 @@
             $(".multiple-choice .answer2").text(data['answers'][1]);
             $(".multiple-choice .answer3").text(data['answers'][2]);
             $(".multiple-choice .answer4").text(data['answers'][3]);
+            $(".multiple-choice .answer5").text(data['answers'][4]);
             switchView("multiple-choice");
         });
 

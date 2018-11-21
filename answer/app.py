@@ -45,8 +45,8 @@ def login():
     """ Login to obtain session cookie if available """
     # regular user
     if request.form.get('username') is not None:
-        username = request.form.get('username')
-        nickname = request.form.get('nickname')
+        username = request.form.get('username').lower()
+        nickname = request.form.get('nickname').lower()
         player = get_current_player(username)
 
         # player can be found
@@ -94,7 +94,7 @@ def register_players():
     file_handle = request.files['file']
 
     for line in file_handle:
-        player = Player(player_name=line.split("@")[0])
+        player = Player(player_name=line.split("@")[0].lower())
         db.session.add(player)
     db.session.commit()
 
@@ -118,8 +118,9 @@ def import_questions():
 
     csv_reader = csv.reader([line.decode("utf-8") for line in file_handle.readlines()])
 
-    for question, correct, wrong1, wrong2, wrong3 in csv_reader:
-        question_obj = Question(question=question, correct=correct, wrong1=wrong1, wrong2=wrong2, wrong3=wrong3)
+    for question, correct, wrong1, wrong2, wrong3, wrong4 in csv_reader:
+        question_obj = Question(question=question, correct=correct, wrong1=wrong1,
+                                wrong2=wrong2, wrong3=wrong3, wrong4=wrong4)
         db.session.add(question_obj)
     db.session.commit()
 

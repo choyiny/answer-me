@@ -18,8 +18,6 @@ def gen_response(my_dict: dict):
 
 def require_admin(func):
     """ require the session to be admin """
-    from flask import session
-
     @wraps(func)
     def check_token(*args, **kwargs):
         # obtain the user

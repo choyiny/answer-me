@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from answer import config
 from answer.extensions import db
 from answer.helpers import gen_response, require_admin, get_current_player, get_player_by_nickname
-from answer.models import Player, Question, QuickQuestion
+from answer.models import Player, Question
 from answer.game import Game
 
 # initialize app with config params
@@ -176,30 +176,11 @@ def back_to_lobby():
     return gen_response({'success': True})
 
 
-@app.route("/admin/swicth_to_quick", methods=['POST'])
-@require_admin
-def switch_to_quick():
-    game.emit("quick", "message")
-    return gen_response({'success': True})
-
-
 @app.route("/admin/next_quick_question", methods=['POST'])
 @require_admin
 def next_quick_question():
-    question: QuickQuestion = QuickQuestion.query.filter_by(asked=False).first()
-    if question:
-        question_dict = question.get_dict()
-
-        # keep track of the question id in the game and the correct answer text to display on tv
-        game.correct_answer_idx = question_dict['answers'].index(question.correct_answer) + 1
-        game.correct_answer_text = question.correct_answer
-
-        # the question is now asked and cannot be selected again
-        question.asked = True
-        db.session.add(question)
-        db.session.commit()
-        return gen_response({'success': True})
-    return gen_response({'success':False})
+    game.emit("quick")
+    return gen_response({'success': True})
 
 
 @socketio.on("first_click", namespace="/game")

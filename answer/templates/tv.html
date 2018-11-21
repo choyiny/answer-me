@@ -52,6 +52,7 @@
             $(".thirdName").text(data[2][0]);
             $(".thirdScore").text(data[2][1]);
             $(".leaderboard").show();
+            console.log("back to lobby");
         });
 
         socket.on('multiple_choice', function (data) {

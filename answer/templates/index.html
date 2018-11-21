@@ -34,27 +34,25 @@
             position: absolute;
         }
 
-        section.login-area {
-            margin-left: 13em;
-            bottom: 250px;
-            position: absolute;
-        }
-
         .login {
-            margin-left: 4.5em;
-            font-size: 3em;
+            position: absolute;
+            bottom: 4em;
+            width: 80%;
+            left: 10%;
         }
 
-        .enter-username {
-            background-color: white;
-            font-size: 3em;
-            padding: 1em;
+        section.login-area .enter-username {
+            position: absolute;
+            bottom: 10em;
+            width: 80%;
+            left: 10%;
         }
 
-        .enter-nickname {
-            background-color: white;
-            font-size: 3em;
-            padding: 1em;
+        section.login-area .enter-nickname {
+            position: absolute;
+            bottom: 7em;
+            width: 80%;
+            left: 10%;
         }
 
         .background {
@@ -94,10 +92,10 @@
     <input class="form-control enter-username" type="text" placeholder="Enter your username">
     <input class="form-control enter-nickname" type="text" placeholder="Preferred nickname">
     <p class="help-text"></p>
-    <button class="btn btn-primary login">Login</button>
+    <button class="btn btn-primary login">Join Game</button>
 </section>
 
-<h2 class="nickname"></h2>
+<h2 class="nickname" style="display:none"></h2>
 
 <section class="lobby hidden">
     <!-- login success... waiting -->

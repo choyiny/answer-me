@@ -3,15 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Game</title>
+    <style>
+        .lobby-bg {
+            background-image: url({{url_for('static',filename='images/tv.png')}})
+        }
+
+        .background {
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    </style>
 </head>
-<body>
+<body class="background lobby-bg">
 <section class="show-question">
     <h1 class="le-question"></h1>
 
 </section>
 <section class="lobby">
     <p>TV</p>
-    <table class="leaderboard">
+    <table>
         <tr class="first">
             <td class="firstName"></td>
             <td class="firstScore"></td>
@@ -27,12 +37,8 @@
     </table>
 </section>
 
-<section class="first_guy">
-    <h2 class="first_guy_name"></h2>
-</section>
-
 <section class="answer">
-    
+
 </section>
 
 
@@ -45,22 +51,18 @@
         var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
 
         socket.on('lobby', function(data) {
-            $(".firstName").text(data[0][0]);
-            $(".firstScore").text(data[0][1]);
-            $(".secondName").text(data[1][0]);
-            $(".secondScore").text(data[1][1]);
-            $(".thirdName").text(data[2][0]);
-            $(".thirdScore").text(data[2][1]);
-            $(".leaderboard").show();
+            li = data
+            console.log(li)
+            $(".firstName").text(li[0][0])
+            $(".firstScore").text(li[0][1])
+            $(".secondName").text(li[1][0])
+            $(".secondScore").text(li[1][1])
+            $(".thirdName").text(li[2][0])
+            $(".thirdScore").text(li[2][1])
         });
 
         socket.on('multiple_choice', function (data) {
             $(".le-question").text(data['question']);
-            $(".leaderboard").hide();
-        });
-
-        socket.on("first_guy", function(data){
-            $(".first_guy_name").text(data);
         });
 
     });

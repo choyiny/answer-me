@@ -27,6 +27,10 @@
     </table>
 </section>
 
+<section class="first_guy">
+    <h2 class="first_guy_name"></h2>
+</section>
+
 <section class="answer">
     
 </section>
@@ -53,6 +57,10 @@
 
         socket.on('multiple_choice', function (data) {
             $(".le-question").text(data['question']);
+        });
+
+        socket.on("first_guy", function(data){
+            $(".first_guy_name").text(data)
         });
 
     });

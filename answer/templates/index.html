@@ -176,30 +176,25 @@
 
         socket.on("quick", function(data){
             $(".quickbutton").attr("disabled", false);
+            switchView("quick")
         })
 
 
         $(".quickbutton").click(function(){
             var name = $(".nickname").text()
             $(this).attr("disabled", true);
-            socket.emit("quick_next", name);
+            socket.emit("first_click", name)
         })
 
         socket.on('multiple_choice', function(data) {
-            if(data === false){
-                switchView("quick")
-            }
-            else{
-                $(".multiple-choice .mcq").text(data['question']);
-                $(".multiple-choice .answer").attr("disabled", null);
-                $(".multiple-choice .answer").css("border", "");
-
-                $(".multiple-choice .answer1").text(data['answers'][0]);
-                $(".multiple-choice .answer2").text(data['answers'][1]);
-                $(".multiple-choice .answer3").text(data['answers'][2]);
-                $(".multiple-choice .answer4").text(data['answers'][3]);
-                switchView("multiple-choice");
-            }
+            $(".multiple-choice .mcq").text(data['question']);
+            $(".multiple-choice .answer").attr("disabled", null);
+            $(".multiple-choice .answer").css("border", "");
+            $(".multiple-choice .answer1").text(data['answers'][0]);
+            $(".multiple-choice .answer2").text(data['answers'][1]);
+            $(".multiple-choice .answer3").text(data['answers'][2]);
+            $(".multiple-choice .answer4").text(data['answers'][3]);
+            switchView("multiple-choice");
         });
 
         socket.on('lobby', function(data) {

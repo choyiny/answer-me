@@ -3,6 +3,7 @@ from flask_socketio import SocketIO
 import random
 import time
 import csv
+import queue
 
 from sqlalchemy.exc import IntegrityError
 
@@ -18,6 +19,7 @@ app.config.from_object(config)
 socketio = SocketIO(app)
 game = Game('/game')
 socketio.on_namespace(game)
+quick_answer_queue = queue.Queue()
 
 
 # initialize connection to db
@@ -150,9 +152,6 @@ def next_question():
         db.session.commit()
 
         return gen_response({'success': True})
-    else:
-        game.emit("multiple_choice", False)
-        return gen_response({'success': False})
 
 
 @app.route("/admin/reset", methods=['POST'])
@@ -170,4 +169,36 @@ def back_to_lobby():
     for p in players:
         d.append([p.get_name(), p.score])
     game.emit("lobby", d[::-1])
+    return gen_response({'success': True})
+
+
+@app.route("/admin/swicth_to_quick", methods=['POST'])
+@require_admin
+def switch_to_quick():
+    game.emit("quick", "message")
+    return gen_response({'success': True})
+
+
+@app.route("/admin/next_quick_question", methods=['POST'])
+@require_admin
+def next_quick_question():
+    quick_answer_queue.queue.clear()
+    return gen_response({'success':True})
+
+
+@socketio.on("first_click", namespace="/game")
+def first_guy_click(data):
+    if quick_answer_queue.qsize() == 0:
+        game.emit("first_guy", data)
+    quick_answer_queue.put(data)
+    print("PUT:", data, "SIZE:", quick_answer_queue.qsize())
+    return gen_response({'success': True})
+
+
+@app.route("/admin/next_player", methods=['POST'])
+@require_admin
+def next_player():
+    print("SIZE:", quick_answer_queue.qsize())
+    if quick_answer_queue.qsize() > 0:
+        game.emit("first_guy", quick_answer_queue.get())
     return gen_response({'success': True})

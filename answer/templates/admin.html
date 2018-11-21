@@ -23,6 +23,8 @@
         <button class="btn btn-primary next-question">Next Question</button>
         <button class="btn btn-success move-to-lobby">Move everyone back to lobby</button>
         <button class="btn btn-danger reset-to-login">KICK EVERYONE OUT</button>
+        <button class="btn quick-answer-section">Quick Answer Section</button>
+        <button class="btn next-player">Next Player</button>
     </div>
     <hr>
     <div class="container text-center">
@@ -84,6 +86,17 @@
             }
         });
 
+        $(".quick-answer-section").click(function(){
+            mc = false;
+            $.post("{{ url_for('switch_to_quick') }}", function (data) {
+            });
+        });
+
+        $(".next-player").click(function(){
+            $.post("{{ url_for('next_player') }}", function (data) {
+            });
+        });
+
         $(".next-question").click(function () {
             if(timer != null){
                 clearTimeout(timer);
@@ -96,9 +109,14 @@
                     }
                     , 15000
                 );
+                $.post("{{ url_for('next_question') }}", function (data) {
+                });
             }
-            $.post("{{ url_for('next_question') }}", function (data) {
-            });
+            else{
+                $.post("{{ url_for('next_quick_question') }}", function (data) {
+                });
+                // Quick section here
+            }
         });
 
         $(".move-to-lobby").click(function () {

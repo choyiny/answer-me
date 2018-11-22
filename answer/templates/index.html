@@ -79,9 +79,8 @@
             width: 86%;
             left: 7%;
             height: 2.8em;
-            border-radius: 4em;
             position: absolute;
-            top: 1.6em;
+            background-color: lightgrey;
         }
 
 
@@ -118,7 +117,7 @@
 </section>
 
 <section class="quick hidden">
-    <button class="btn quickbutton">click me</button>
+    <button class="btn quickbutton" style="top:3em">click me</button>
 </section>
 
 </body>
@@ -128,8 +127,8 @@
     $(document).ready(function () {
 
         // try logging in with localStorage first
-        if (localStorage.getItem("username")) {
-            loginWith(localStorage.getItem("username"));
+        if (localStorage.getItem("username")&&localStorage.getItem("nickname")) {
+            loginWith(localStorage.getItem("username"), localStorage.getItem("nickname"));
         }
 
         // when the login button is pressed
@@ -190,11 +189,13 @@
             switchView("quick");
         });
 
-
+        var quickLock = false;
         $(".quickbutton").click(function(){
+            quickLock = true;
             var name = $(".nickname").text();
             $(this).attr("disabled", true);
             socket.emit("first_click", name);
+            quickLock = false;
         });
 
         socket.on('multiple_choice', function(data) {
@@ -241,13 +242,14 @@
         }
     }
 
-    function loginWith(username, nickname=null) {
+    function loginWith(username, nickname) {
         $.post("{{ url_for('login') }}", {"username": username, "nickname": nickname}, function (data) {
             if (data['success']) {
                 $(".login-area .help-text").text("");
                 switchView("lobby");
-                $(".nickname").text(nickname);
+                $(".nickname").text(data["nickname"]);
                 localStorage.setItem("username", data["username"]);
+                localStorage.setItem("nickname", data["nickname"]);
                 connectToGame();
             } else {
                 var message = data["message"];

@@ -12,34 +12,53 @@
             background-size: cover;
             background-repeat: no-repeat;
         }
+        .le-question, .first_guy_name, .correct {
+            top: 40%;
+            left: 10%;
+            font-size: 2.5em;
+            position: absolute;
+            color: white;
+        }
+        .leaderboard {
+            position: absolute;
+            font-size: 3em;
+            color: white;
+            right: 1em;
+            top: 20%;
+        }
+
+        .leaderboard .name {
+            width: 8em;
+        }
     </style>
 </head>
 <body class="background lobby-bg">
 <section class="show-question">
     <h1 class="le-question"></h1>
-
 </section>
 <section class="lobby">
-    <p>TV</p>
-    <table>
+    <h2 class="correct" style="top:30%">正確答案：<br><span class="correct-answer"></span></h2>
+    <table class="leaderboard">
         <tr class="first">
-            <td class="firstName"></td>
-            <td class="firstScore"></td>
+            <td class="name firstName"></td>
+            <td class="score firstScore"></td>
         </tr>
         <tr class="second">
-            <td class="secondName"></td>
-            <td class="secondScore"></td>
+            <td class="name secondName"></td>
+            <td class="score secondScore"></td>
         </tr>
         <tr class="third">
-            <td class="thirdName"></td>
-            <td class="thirdScore"></td>
+            <td class="name thirdName"></td>
+            <td class="score thirdScore"></td>
         </tr>
     </table>
 </section>
 
-<section class="answer">
 
+<section class="first_guy">
+    <h2 class="first_guy_name"></h2>
 </section>
+
 
 
 </section>
@@ -49,7 +68,7 @@
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function () {
         var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
-
+        $(".correct").hide();
         socket.on('lobby', function(data) {
             $(".firstName").text(data[0][0]);
             $(".firstScore").text(data[0][1]);
@@ -58,12 +77,29 @@
             $(".thirdName").text(data[2][0]);
             $(".thirdScore").text(data[2][1]);
             $(".leaderboard").show();
-            console.log("back to lobby");
+            $(".le-question").hide();
+            $(".correct").show();
         });
 
         socket.on('multiple_choice', function (data) {
+            $(".le-question").show();
             $(".le-question").text(data['question']);
+            $(".leaderboard").hide();
+            $(".correct").hide();
         });
+
+        socket.on("first_guy", function(data) {
+            $(".first_guy_name").text(data);
+            $(".correct").html("");
+        });
+
+        socket.on("correct_answer", function(data) {
+            $(".correct").show();
+           if (data != null) {
+               $(".correct-answer").text(data);
+           }
+        });
+
 
     });
 </script>

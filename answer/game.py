@@ -1,5 +1,5 @@
 import time
-from queue import Queue
+
 from flask_socketio import Namespace
 from flask import session
 
@@ -81,7 +81,7 @@ class Game(Namespace):
 
     def _calculate_score(self, time_taken):
         """ Return score the player would get based on the time taken to answer the question. """
-        return int(30 - time_taken) * 7
+        return int(30 - time_taken) * 10
 
     def _get_stats(self):
         """ Returns the statistics of the game as dict. """

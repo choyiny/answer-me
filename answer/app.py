@@ -44,9 +44,11 @@ def tv():
 def login():
     """ Login to obtain session cookie if available """
     # regular user
+    if request.form.get('nickname') is None:
+        return gen_response({'success': True, 'message': 'please input nickname'})
     if request.form.get('username') is not None:
-        username = request.form.get('username').lower()
-        nickname = request.form.get('nickname').lower()
+        username = request.form.get('username').lower().strip()
+        nickname = request.form.get('nickname').lower().strip()
         player = get_current_player(username)
 
         # player can be found
@@ -63,7 +65,7 @@ def login():
             # set user session
             session['username'] = username
 
-            return gen_response({'success': True, 'username': username})
+            return gen_response({'success': True, 'username': username, 'nickname': nickname})
         else:
             # player cannot be found in database
             return gen_response({'success': False, 'message': 'must use registered email prefix'})
@@ -173,6 +175,7 @@ def back_to_lobby():
     for p in players:
         d.append([p.get_name(), p.score])
     game.emit("lobby", d[::-1])
+    game.emit("correct_answer", game.correct_answer_text)
     return gen_response({'success': True})
 
 
@@ -195,7 +198,7 @@ def first_guy_click(data):
 @require_admin
 def next_player():
     previous = quick_answer_queue.get()
-    game.add_score(get_player_by_nickname(previous), -200)
+    game.add_score(get_player_by_nickname(previous), - 100)
     if quick_answer_queue.qsize() > 0:
         game.emit("first_guy", quick_answer_queue.queue[0])
     return gen_response({'success': True})

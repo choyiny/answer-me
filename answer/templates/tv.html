@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Game</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
         .lobby-bg {
             background-image: url({{url_for('static',filename='images/tv.png')}})
         }
@@ -78,7 +82,7 @@
             $(".thirdScore").text(data[2][1]);
             $(".leaderboard").show();
             $(".le-question").hide();
-            $(".correct").show();
+            $(".first_guy_name").hide();
         });
 
         socket.on('multiple_choice', function (data) {
@@ -88,16 +92,23 @@
             $(".correct").hide();
         });
 
+        socket.on("quick", function(data) {
+           $(".le-question").text(data);
+           $(".le-question").show();
+        });
+
         socket.on("first_guy", function(data) {
+            $(".first_guy_name").show();
             $(".first_guy_name").text(data);
+            $(".le-question").hide();
             $(".correct").html("");
         });
 
         socket.on("correct_answer", function(data) {
-            $(".correct").show();
-           if (data != null) {
-               $(".correct-answer").text(data);
-           }
+            if (data != null) {
+                $(".correct").show();
+                $(".correct-answer").text(data);
+            }
         });
 
 

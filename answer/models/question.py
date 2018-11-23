@@ -3,6 +3,17 @@ import random
 from answer.extensions import db
 
 
+class QuickQuestion(db.Model):
+    __tablename__ = "quick_questions"
+    question_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    question = db.Column(db.Text, nullable=False)
+    asked = db.Column(db.Boolean, default=False)
+
+    def __init__(self, question):
+        self.question = question
+        self.asked = False
+
+
 class Question(db.Model):
 
     __tablename__ = "questions"

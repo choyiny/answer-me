@@ -3,7 +3,7 @@ import time
 from flask_socketio import Namespace
 from flask import session
 
-from answer.helpers import get_current_player, get_player_by_nickname
+from answer.helpers import get_current_player
 from answer.extensions import db
 
 
@@ -81,11 +81,12 @@ class Game(Namespace):
 
     def _calculate_score(self, time_taken):
         """ Return score the player would get based on the time taken to answer the question. """
-        return int(30 - time_taken) * 10
+        return int(300 * (1 / 2) ** (time_taken / 18.927))
 
     def _get_stats(self):
         """ Returns the statistics of the game as dict. """
         return {
             "total_players": len(self.players_logged_in),
-            "players": list(self.players_logged_in)
+            "players": list(self.players_logged_in),
+            "answered": list(self.answered)
         }

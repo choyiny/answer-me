@@ -10,6 +10,13 @@ CREATE TABLE questions (
         PRIMARY KEY (question_id)
 );
 
+CREATE TABLE quick_questions (
+        question_id SERIAL NOT NULL,
+        question TEXT NOT NULL,
+        asked BOOLEAN,
+        PRIMARY KEY (question_id)
+);
+
 CREATE TABLE players (
         player_id SERIAL NOT NULL,
         player_name TEXT NOT NULL,

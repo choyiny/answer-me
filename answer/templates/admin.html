@@ -46,8 +46,8 @@
     </div>
     <hr>
     <div class="row">
-        <div class="col-md-6">
-            <h3>Upload: Players</h3>
+        <div class="col-md-4">
+            <h3>Upload: 玩家</h3>
             <p class="danger">Note: Will delete all old players.</p>
             <form action="{{ url_for('register_players')}}" method="post" enctype=multipart/form-data>
                 <div class="form-group">
@@ -56,10 +56,20 @@
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
-        <div class="col-md-6">
-            <h3>Upload: Questions</h3>
+        <div class="col-md-4">
+            <h3>Upload: 選擇題</h3>
             <p class="danger">Note: Will delete all old questions.</p>
             <form action="{{ url_for('import_questions')}}" method="post" enctype=multipart/form-data>
+                <div class="form-group">
+                    <input class="form-control-file" type="file" name="file">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <h3>Upload: 搶答題</h3>
+            <p class="danger">Note: Will delete all old questions.</p>
+            <form action="{{ url_for('import_quick_questions')}}" method="post" enctype=multipart/form-data>
                 <div class="form-group">
                     <input class="form-control-file" type="file" name="file">
                 </div>
@@ -83,6 +93,7 @@
         socket.on('stats', function(data) {
             $(".total-players").text(data["total_players"] + "");
             $(".current-players").text(data["players"] + "");
+            $(".answered-players").text(data["answered"] + "");
         });
 
         var mc = true;

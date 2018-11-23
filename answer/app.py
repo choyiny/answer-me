@@ -1,7 +1,5 @@
 from flask import Flask, request, render_template, session
 from flask_socketio import SocketIO
-import random
-import time
 import csv
 import queue
 
@@ -10,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from answer import config
 from answer.extensions import db
 from answer.helpers import gen_response, require_admin, get_current_player, get_player_by_nickname
-from answer.models import Player, Question
+from answer.models import Player, Question, QuickQuestion
 from answer.game import Game
 
 # initialize app with config params
@@ -129,6 +127,27 @@ def import_questions():
     return gen_response({'success': True})
 
 
+@app.route("/admin/import_quick_questions", methods=["POST"])
+@require_admin
+def import_quick_questions():
+    """
+    Imports the quick questions
+    """
+    # reset everything
+    QuickQuestion.query.delete()
+    db.session.commit()
+
+    # the file handle for the file csv
+    file_handle = request.files['file']
+
+    for line in file_handle:
+        q = QuickQuestion(question=line.strip())
+        db.session.add(q)
+    db.session.commit()
+
+    return gen_response({'success': 'True'})
+
+
 @app.route("/admin/next_question", methods=['POST'])
 @require_admin
 def next_question():
@@ -175,14 +194,19 @@ def back_to_lobby():
     for p in players:
         d.append([p.get_name(), p.score])
     game.emit("lobby", d[::-1])
-    game.emit("correct_answer", game.correct_answer_text)
+    if game.correct_answer_text:
+        game.emit("correct_answer", game.correct_answer_text)
     return gen_response({'success': True})
 
 
 @app.route("/admin/next_quick_question", methods=['POST'])
 @require_admin
 def next_quick_question():
-    game.emit("quick")
+    game.reset()
+
+    question: QuickQuestion = QuickQuestion.query.filter_by(asked=False).order_by(QuickQuestion.question_id).first()
+
+    game.emit("quick", question.question)
     return gen_response({'success': True})
 
 
@@ -191,6 +215,7 @@ def first_guy_click(data):
     if quick_answer_queue.qsize() == 0:
         game.emit("first_guy", data)
     quick_answer_queue.put(data)
+    print(data, "clicked")
     return gen_response({'success': True})
 
 

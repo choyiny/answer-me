@@ -79,6 +79,8 @@ class Game(Namespace):
         self.correct_answer_idx = -1
         self.correct_answer_text = None
 
+        self.emit(self.STATISTICS, self._get_stats())
+
     def _calculate_score(self, time_taken):
         """ Return score the player would get based on the time taken to answer the question. """
         return int(300 * (1 / 2) ** (time_taken / 18.927))

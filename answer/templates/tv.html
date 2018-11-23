@@ -94,6 +94,8 @@
 
         socket.on("quick", function(data) {
            $(".le-question").text(data);
+           $(".first_guy_name").hide();
+           $(".leaderboard").hide();
            $(".le-question").show();
         });
 

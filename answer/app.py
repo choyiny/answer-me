@@ -207,6 +207,11 @@ def next_quick_question():
     question: QuickQuestion = QuickQuestion.query.filter_by(asked=False).order_by(QuickQuestion.question_id).first()
 
     game.emit("quick", question.question)
+
+    question.asked = True
+    db.session.add(question)
+    db.session.commit()
+
     return gen_response({'success': True})
 
 

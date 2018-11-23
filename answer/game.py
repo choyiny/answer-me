@@ -59,7 +59,7 @@ class Game(Namespace):
             if player.player_name not in self.answered:
                 self.answered.add(player.player_name)
                 # score for this round = 30 seconds - time taken
-                player.score += self._calculate_score(time_taken)
+                player.score += Game.calculate_score(time_taken)
                 db.session.add(player)
                 db.session.commit()
 
@@ -81,9 +81,13 @@ class Game(Namespace):
 
         self.emit(self.STATISTICS, self._get_stats())
 
-    def _calculate_score(self, time_taken):
+    @staticmethod
+    def calculate_score(time_taken):
         """ Return score the player would get based on the time taken to answer the question. """
-        return int(300 * (1 / 2) ** (time_taken / 18.927))
+        if time_taken <= 30:
+            return int(300 * (1 / 2) ** (time_taken / 18.927))
+        else:
+            return 0
 
     def _get_stats(self):
         """ Returns the statistics of the game as dict. """

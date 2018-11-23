@@ -97,6 +97,7 @@
            $(".first_guy_name").hide();
            $(".leaderboard").hide();
            $(".le-question").show();
+           $(".correct").html("");
         });
 
         socket.on("first_guy", function(data) {

@@ -276,7 +276,7 @@
     }
 
     function startCountdown() {
-        $(".progress-bar div").animate({ width: "0%"}, 15000);
+        $(".progress-bar div").animate({ width: "0%"}, 15000).delay(1000).animate({ width: "100%"}, 10);
     }
 
     function logout() {

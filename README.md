@@ -1,5 +1,9 @@
 # Answer me
-A Kahoot inspired game playable on web.
+Real-time Q&A Application inspired by Kahoot. A discovery project into Python Flask websockets with SocketIO, and an exploration on using technology to host events for student clubs.
+
+<img src="https://github.com/choyiny/answer-me/blob/master/answer/static/images/MC.png" width="300">
+
+This application was used for this event: https://www.facebook.com/events/1127839204040865/
 
 # Development setup
 

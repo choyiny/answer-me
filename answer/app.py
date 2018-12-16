@@ -141,7 +141,7 @@ def import_quick_questions():
     file_handle = request.files['file']
 
     for line in file_handle:
-        q = QuickQuestion(question=line.strip())
+        q = QuickQuestion(question=line.decode('utf-8').strip())
         db.session.add(q)
     db.session.commit()
 
@@ -187,7 +187,7 @@ def reset_everyone():
 def back_to_lobby():
     if quick_answer_queue.qsize() > 0:
         previous = quick_answer_queue.get()
-        game.add_score(get_player_by_nickname(previous), 200)
+        game.add_score(get_player_by_nickname(previous), 500)
         quick_answer_queue.queue.clear()
     players = Player.query.order_by(Player.score).all()
     d = []
@@ -228,7 +228,8 @@ def first_guy_click(data):
 @require_admin
 def next_player():
     previous = quick_answer_queue.get()
-    game.add_score(get_player_by_nickname(previous), - 100)
+    player = get_player_by_nickname(previous)
+    game.add_score(player, -(int(player.score * 0.05)))
     if quick_answer_queue.qsize() > 0:
         game.emit("first_guy", quick_answer_queue.queue[0])
     return gen_response({'success': True})

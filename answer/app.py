@@ -86,9 +86,9 @@ def admin():
 @require_admin
 def register_players():
     """
-    Registers the players to the database based on (SOME) as follows:
-
-    [to be filled in]
+    Registers the players to the database based on the uploaded files.
+    
+    Format of file uploaded: a list of email addresses separated by newline character.
     """
     # the file handle for the file csv
     file_handle = request.files['file']
@@ -105,7 +105,10 @@ def register_players():
 @require_admin
 def import_questions():
     """
-    Imports the questions
+    Imports the questions.
+    
+    File format: A CSV with the following format
+    question, correct answer, wrong answer 1, wrong answer 2, wrong answer3, wrong answer 4
     """
     # reset everything
     Question.query.delete()
@@ -132,6 +135,8 @@ def import_questions():
 def import_quick_questions():
     """
     Imports the quick questions
+    
+    File format: A list of question separated by new line character.
     """
     # reset everything
     QuickQuestion.query.delete()
@@ -153,6 +158,8 @@ def import_quick_questions():
 def next_question():
     """
     Selects the next question in the database and broadcast it to all
+    
+    TODO: Rewrite so that admins broadcast it through socket. 
     """
     question: Question = Question.query.filter_by(asked=False).first()
     if question:
@@ -178,6 +185,11 @@ def next_question():
 @app.route("/admin/reset", methods=['POST'])
 @require_admin
 def reset_everyone():
+    """
+    Logout all connected players
+    
+    TODO: Rewrite so that admins broadcast it through socket. 
+    """
     game.emit("logout_everyone")
     return gen_response({'success': True})
 
@@ -185,6 +197,11 @@ def reset_everyone():
 @app.route("/admin/bump_to_lobby", methods=['POST'])
 @require_admin
 def back_to_lobby():
+    """
+    Move all connected players back to lobby
+    
+    TODO: Rewrite so that admins broadcast it through socket. 
+    """
     if quick_answer_queue.qsize() > 0:
         previous = quick_answer_queue.get()
         game.add_score(get_player_by_nickname(previous), 500)
@@ -202,6 +219,11 @@ def back_to_lobby():
 @app.route("/admin/next_quick_question", methods=['POST'])
 @require_admin
 def next_quick_question():
+    """
+    Select the next quick question and broadcast
+    
+    TODO: Rewrite so that admins broadcast it through socket. 
+    """
     game.reset()
 
     question: QuickQuestion = QuickQuestion.query.filter_by(asked=False).order_by(QuickQuestion.question_id).first()
@@ -217,6 +239,10 @@ def next_quick_question():
 
 @socketio.on("first_click", namespace="/game")
 def first_guy_click(data):
+    """
+    For a connected player, queue up to answer a quick question.
+    
+    """
     if quick_answer_queue.qsize() == 0:
         game.emit("first_guy", data)
     quick_answer_queue.put(data)
@@ -227,6 +253,10 @@ def first_guy_click(data):
 @app.route("/admin/next_player", methods=['POST'])
 @require_admin
 def next_player():
+    """
+    Selects the next player in queue to answer quick questions
+    
+    """
     previous = quick_answer_queue.get()
     player = get_player_by_nickname(previous)
     game.add_score(player, -(int(player.score * 0.05)))
